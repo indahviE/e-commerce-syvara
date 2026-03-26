@@ -193,7 +193,7 @@
                                         href="/product/{{ $product->id }}/detail"
                                         class="flex-1 px-4 py-3 bg-gradient-to-r from-pink-50 to-rose-50 text-pink-600 rounded-xl font-semibold hover:from-pink-100 hover:to-rose-100 transition duration-300 text-center text-sm border border-pink-200"
                                     >
-                                        <i class="fas fa-cart-plus mr-1"></i> Beli
+                                        <i class="fas fa-cart-plus mr-1"></i> Checkout Sekarang
                                     </a>
                                     <button
                                         class="add-to-cart px-4 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-semibold hover:shadow-lg transition duration-300 text-sm"
@@ -237,7 +237,7 @@
             </div>
         </div>
                 <!-- Back to Shopping -->
-                <div class="mt-16 text-center">
+                <div class="mt-16 text-center mb-16">
                     <p class="text-gray-600 mb-6">Ingin menambah lebih banyak favorit?</p>
                     <a href="/product" class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-semibold hover:shadow-lg transition duration-300">
                         <i class="fas fa-shopping-bag"></i> Lanjutkan Belanja

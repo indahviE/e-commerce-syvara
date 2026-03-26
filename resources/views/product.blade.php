@@ -183,11 +183,16 @@
                                     </span>
                                     <span class="text-pink-500 font-semibold group-hover:text-pink-600 opacity-0 group-hover:opacity-100 transition">→</span>
                                 </div>
-
-                                <!-- Add to Cart Button -->
-                                <button onclick="event.preventDefault();" class="w-full px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold text-center hover:shadow-lg transition duration-300 text-sm">
-                                    <i class="fas fa-shopping-bag mr-1"></i> Beli Sekarang
-                                </button>
+                                
+                                <div class="flex gap-2">
+                                    <!-- Add to Cart Button -->
+                                    <button onclick="event.preventDefault();" class="from-pink-50 to-rose-50 text-pink-600 rounded-xl font-semibold hover:from-pink-100 hover:to-rose-100 transition duration-300 text-center text-sm border border-pink-200 w-full">
+                                         Checkout
+                                    </button>
+                                    <button onclick="event.preventDefault();" class="w-fit px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold text-center hover:shadow-lg transition duration-300 text-sm">
+                                        <i class="fas fa-shopping-bag mr-1"></i>
+                                    </button>
+                                </div>
                             </div>
                         </a>
                     @endforeach

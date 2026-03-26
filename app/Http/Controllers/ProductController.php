@@ -101,15 +101,15 @@ class ProductController extends Controller
             'stock' => 'required|integer',
             'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048'
+            'gambar' => 'nullable|image|mimes:jpeg,jpg,png|max:2048'
         ], [
             'price.numeric' => 'Harga harus berupa angka!',
             'price.min' => 'Harga tidak boleh negatif!',
             'stock.integer' => 'Stock harus berupa angka!',
             'stock.min' => 'Stock tidak boleh negatif!',
             'category_id.exists' => 'Kategori tidak ditemukan!',
-            'image.mimes' => 'Format foto tidak mendukung!',
-            'image.max' => 'Ukuran gambar maksimal 2mb!'
+            'gambar.mimes' => 'Format foto tidak mendukung!',
+            'gambar.max' => 'Ukuran gambar maksimal 2mb!'
         ]);
 
         $exists = Products::where('name', $request->name)
@@ -120,14 +120,16 @@ class ProductController extends Controller
         if($exists) {
             return back()->withErrors(['name'=> 'Produk dengan nama kategori ini sudah ada!']);
         }
-        if($request->hasFile('image')) {
+        if($request->hasFile('gambar')) {
             if($product->image){
                 Storage::disk('public')->delete($product->image);
             }
-            $image = $request->image->store('images', 'public');
+            $request['image'] = $request->gambar->store('images', 'public');
         } else {
-            $image = $product->image;
+            $request['image'] = $product->image;
         }
+
+        // dd($request->all());
         $product->update($request->all());
 
         return redirect()->route('ProductAdmin')->with('success', 'Produk telah ter-update');

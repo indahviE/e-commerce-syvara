@@ -95,7 +95,7 @@
                                     <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-auto">
                                 </div>
                             @endif
-                            <input type="file" name="image" accept="image/*"
+                            <input type="file" name="gambar" accept="image/*"
                                 class="w-full border-2 border-gray-200 rounded-lg px-4 py-3">
                         </div>
 

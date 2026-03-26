@@ -136,11 +136,14 @@
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <a href="/product" class="flex-1 text-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">
+                        <a href="/product" class="w-full flex-1 text-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">
                             <i class="fas fa-arrow-left mr-2"></i> Kembali
                         </a>
-                        <button class="flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold hover:shadow-lg transition" {{ $product->stock == 0 ? 'disabled' : '' }}>
-                            <i class="fas fa-shopping-bag mr-2"></i> Beli Sekarang
+                        <button class="w-full flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold hover:shadow-lg transition" {{ $product->stock == 0 ? 'disabled' : '' }}>
+                            Checkout Sekarang
+                        </button>
+                        <button class="w-fit px-3 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold hover:shadow-lg transition" {{ $product->stock == 0 ? 'disabled' : '' }}>
+                            <i class="fas fa-shopping-bag mr-2"></i>
                         </button>
                     </div>
                 </div>
