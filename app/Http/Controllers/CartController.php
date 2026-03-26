@@ -2,21 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\CartDetail;
+use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    // Tampilkan halaman wishlist
+    // Tampilkan halaman 
     public function index()
     {
-        if (!Auth::check()) {
-            return redirect('/login');
-        }
+       if (!Auth::check()) {
+    return redirect('/login');
+}
 
-        return view('cart_view', ['products' => [["price" => 30000], ["price" => 25000]]]);
+$user = Auth::user();
+$cart = Cart::where('user_id', $user->id)->first();
+
+// kalau belum punya cart, kembalikan keranjang kosong
+if (!$cart) {
+    return view('cart_view', ['products' => []]);
+}
+
+$cartDetails = CartDetail::where('cart_id', $cart->id)
+                ->with('product.category') // eager load relasi product
+                ->get();
+
+// ambil product nya aja (fungsi map.js di laravl)
+$products = $cartDetails->pluck('product');
+
+return view('cart_view', ['products' => $products]);
     }
-    // Tampilkan halaman wishlist
+    // Tampilkan halaman
     public function history()
     {
         if (!Auth::check()) {
@@ -24,5 +42,44 @@ class CartController extends Controller
         }
 
         return view('history_view', ['orders' => []]);
+    }
+
+    public function cart_add_product(Request $request)
+    {
+        
+        if (!Auth::check()) {
+            // return redirect('/login');
+
+             return response()->json(['success' => false, 'message' => 'UnAuth'], 400);
+        }
+
+        $cart = Cart::where('user_id', Auth::user()->id)->first();
+        if (!$cart) $cart = Cart::create(['user_id' => Auth::user()->id]);
+
+        //cek udah ada blm produk ini dikeranjang user
+        $isHasItemOnCart = CartDetail::where('product_id', $request->id_produk)->where('cart_id', $cart->id)->first();
+
+        if ($isHasItemOnCart) {
+            return response()->json(['success' => false, 'message' => 'Aksi berhenti. Barang sudah ada dikeranjangmu!'], 500);
+        }
+
+        CartDetail::create(['product_id' => $request->id_produk, 'cart_id' => $cart->id]);
+
+        // logic tambah ke cart...
+
+        return response()->json(['success' => true, 'message' => 'Berhasil masuk ke keranjang!'], 200);
+    }
+
+    public function cart_remove_product(Request $request, $produk_id){
+         if (!Auth::check()) {
+            // return redirect('/login');
+             return response()->json(['success' => false, 'message' => 'UnAuth'], 400);
+             }
+             
+             $cart = Cart::where('user_id', Auth::user()->id)->first();
+             CartDetail::where('cart_id', $cart->id)->where('product_id', $produk_id)->delete();
+             
+            //  return redirect('/my-orders');
+             return response()->json(['success' => true, 'message' => 'ok'], 200);
     }
 }

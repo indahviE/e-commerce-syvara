@@ -142,8 +142,10 @@
                         <button class="w-full flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold hover:shadow-lg transition" {{ $product->stock == 0 ? 'disabled' : '' }}>
                             Checkout Sekarang
                         </button>
-                        <button class="w-fit px-3 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold hover:shadow-lg transition" {{ $product->stock == 0 ? 'disabled' : '' }}>
-                            <i class="fas fa-shopping-bag mr-2"></i>
+                        <button
+                        onclick="addToCart('{{ route('cart_product_add') }}', '{{ $product->id }}')"
+                        class="w-fit px-3 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold hover:shadow-lg transition" {{ $product->stock == 0 ? 'disabled' : '' }}>
+                            <i class="fas fa-shopping-bag mx-2"></i>
                         </button>
                     </div>
                 </div>
@@ -445,5 +447,7 @@
     `;
     document.head.appendChild(style);
     </script>
+
+    <script src="{{asset('storage/js/functionBackend.js')}}"></script>
 </body>
 </html>

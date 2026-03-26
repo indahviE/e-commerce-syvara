@@ -6,285 +6,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keranjang - Syvara</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="{{asset('storage/css/payment.css')}}">
+    <link rel="stylesheet" href="{{ asset('storage/css/payment.css') }}">
 </head>
 
 <body>
-
     <!-- NAVBAR -->
     <x-navbar></x-navbar>
 
-    <!-- HERO -->
-    {{-- <section class="relative pt-8 pb-6 px-4">
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-pink-500 rounded-3xl p-8 sm:p-12 shadow-xl">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div>
-                        <h1 class="text-4xl md:text-5xl font-bold mb-3 text-white flex items-center gap-3">
-                          Keranjang Anda
-                        </h1>
-                        <p class="text-pink-100 text-lg">Berikan informasi detail untuk melakukan pengiriman produk yang dipesan.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> --}}
-
     <!-- MAIN CONTENT -->
-    <div class="cart-container">
+    <div class="cart-container" >
+       
 
         <!-- LEFT: CART ITEMS -->
-        <div class="mb-16">
+        <form action="{{route('show_payment')}}" method="post" class="mb-16">
+            @csrf
             <div class="card">
                 <div class="card-header">
-                    <h2><span class="dot"></span> Daftar Produk dalam Keranjang</h2>
-                    <span style="font-size:0.8rem;color:var(--text-gray);">5 item</span>
-                </div>
-
-                <!-- SELECT ALL -->
-                <div class="select-all-row">
-                    <input type="checkbox" class="custom-check" id="selectAll" checked onchange="toggleAll(this)">
-                    <label for="selectAll" style="cursor:pointer;">Pilih Semua</label>
-                    <span style="margin-left:auto;color:#EF4444;font-size:0.82rem;cursor:pointer;font-weight:600;"
-                        onclick="deleteSelected()">🗑 Hapus Dipilih</span>
+                    <h2><span class="dot"></span> Daftar Produk Yang dipilih</h2>
+                    <span style="font-size:0.8rem;color:var(--text-gray);">{{ count($products) }} item</span>
                 </div>
 
                 <!-- ITEM 1 -->
-                <div class="cart-item" id="item-1">
-                    <div class="item-check">
-                        <input type="checkbox" class="custom-check item-checkbox" checked onchange="updateSummary()">
-                    </div>
-                    <div
-                        style="width:90px;height:90px;border-radius:14px;background:var(--pink-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);">
-                        <img src="{{ asset('images/products/centella-serum.jpg') }}" onerror="this.style.display='none'"
-                            alt="Centella Serum" class="item-image" style="width:90px;height:90px;position:absolute;">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFAFD4"
-                            stroke-width="1.5">
-                            <path d="M9 3h6l1 4H8L9 3z" />
-                            <path d="M8 7v13a1 1 0 001 1h6a1 1 0 001-1V7" />
-                            <path d="M10 11v6M14 11v6" />
-                        </svg>
-                    </div>
-                    <div class="item-info">
-                        <span class="item-badge">Hydration</span>
-                        <div class="item-name">SKIN1004 Centella Asiatica Serum</div>
-                        <div class="item-stock">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" />
-                                <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
+                @foreach ($products as $data)
+                    <div class="cart-item" id="item-{{ $loop->iteration }}">
+                        <input type="text" type="number" name="id[]" value="{{$data->id}}" hidden>
+                        <div href="/product/{{ $data->id }}/detail"
+                            style="width:90px;height:90px;border-radius:14px;background:var(--pink-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);">
+                            <img src="{{ asset('storage/' . $data->image) }}" onerror="this.style.display='none'"
+                                alt="Centella Serum" class="item-image"
+                                style="width:90px;height:90px;position:absolute;">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFAFD4"
+                                stroke-width="1.5">
+                                <path d="M9 3h6l1 4H8L9 3z" />
+                                <path d="M8 7v13a1 1 0 001 1h6a1 1 0 001-1V7" />
+                                <path d="M10 11v6M14 11v6" />
                             </svg>
-                            Stok: 11
                         </div>
-                        <div class="item-bottom">
-                            <div>
-                                <div class="item-price">Rp 150.000</div>
-                                <div class="item-subtotal" id="subtotal-1">Subtotal: Rp 150.000</div>
-                            </div>
-                            <div class="qty-control">
-                                <button class="qty-btn"
-                                    onclick="changeQty('qty-1', -1, 150000, 'subtotal-1')">−</button>
-                                <input type="number" id="qty-1" class="qty-input" value="1" min="1"
-                                    max="11" onchange="calcSubtotal('qty-1', 150000, 'subtotal-1')">
-                                <button class="qty-btn" onclick="changeQty('qty-1', 1, 150000, 'subtotal-1')">+</button>
+                        <div class="item-info">
+                            {{-- <a href="/product/{{ $data->id }}/detail"> --}}
+                                <span class="item-badge">{{ $data->category->category_name }}</span>
+                                <div class="item-name">{{ $data->name }}</div>
+                                <div class="item-stock">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" />
+                                        <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
+                                    </svg>
+                                    Stok: {{ $data->stock }}
+                                </div>
+                            {{-- </a> --}}
+                            <div class="item-bottom">
+                                <div>
+                                    <div class="item-price">Rp {{ number_format($data->price, 0, ',', '.') }}
+                                    </div>
+                                    <div class="item-subtotal" id="subtotal-{{ $loop->iteration }}">Subtotal: Rp
+                                        {{ number_format($data->price, 0, ',', '.') }}</div>
+                                </div>
+                                <div class="">
+                                    {{-- <button type="button" class="qty-btn"
+                                        onclick="changeQty('qty-{{ $loop->iteration }}', -1, {{ $data->price }}, 'subtotal-{{ $loop->iteration }}')">−</button> --}}
+                                    <input type="number" id="qty-{{ $loop->iteration }}" class="qty-input"
+                                        value="{{$data->qty}}" min="1" max="11" name="qtys[]" readonly
+                                        onchange="calcSubtotal('qty-{{ $loop->iteration }}', {{ $data->price }}, 'subtotal-{{ $loop->iteration }}')" hidden>
+                                    {{-- <button type="button" class="qty-btn"
+                                        onclick="changeQty('qty-{{ $loop->iteration }}', 1, {{ $data->price }}, 'subtotal-{{ $loop->iteration }}')">+</button> --}}
+                                        <span class="font-bold text-gray-600 text-xs m-3">{{$data->qty}} items</span>
+                                </div>
                             </div>
                         </div>
+                        
                     </div>
-                    <button class="btn-delete" onclick="removeItem('item-1')" title="Hapus">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
-                        </svg>
-                    </button>
-                </div>
+                @endforeach
 
-                <!-- ITEM 2 -->
-                <div class="cart-item" id="item-2">
-                    <div class="item-check">
-                        <input type="checkbox" class="custom-check item-checkbox" checked onchange="updateSummary()">
-                    </div>
-                    <div
-                        style="width:90px;height:90px;border-radius:14px;background:var(--pink-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFAFD4"
-                            stroke-width="1.5">
-                            <circle cx="12" cy="12" r="9" />
-                            <path d="M12 7v5l3 3" />
-                        </svg>
-                    </div>
-                    <div class="item-info">
-                        <span class="item-badge">Brightening</span>
-                        <div class="item-name">Skin1004 Madagascar Centella Brightening Serum</div>
-                        <div class="item-stock">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" />
-                                <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
-                            </svg>
-                            Stok: 100
-                        </div>
-                        <div class="item-bottom">
-                            <div>
-                                <div class="item-price">Rp 150.000</div>
-                                <div class="item-subtotal" id="subtotal-2">Subtotal: Rp 300.000</div>
-                            </div>
-                            <div class="qty-control">
-                                <button class="qty-btn"
-                                    onclick="changeQty('qty-2', -1, 150000, 'subtotal-2')">−</button>
-                                <input type="number" id="qty-2" class="qty-input" value="2"
-                                    min="1" max="100"
-                                    onchange="calcSubtotal('qty-2', 150000, 'subtotal-2')">
-                                <button class="qty-btn"
-                                    onclick="changeQty('qty-2', 1, 150000, 'subtotal-2')">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn-delete" onclick="removeItem('item-2')" title="Hapus">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
-                        </svg>
-                    </button>
-                </div>
 
-                <!-- ITEM 3 -->
-                <div class="cart-item" id="item-3">
-                    <div class="item-check">
-                        <input type="checkbox" class="custom-check item-checkbox" checked onchange="updateSummary()">
-                    </div>
-                    <div
-                        style="width:90px;height:90px;border-radius:14px;background:var(--pink-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFAFD4"
-                            stroke-width="1.5">
-                            <path d="M7 17C7 14.8 8.6 13 10.5 13H13.5C15.4 13 17 14.8 17 17" />
-                            <path d="M12 13V7M9 10l3-3 3 3" />
-                        </svg>
-                    </div>
-                    <div class="item-info">
-                        <span class="item-badge haircare">Hair Care</span>
-                        <div class="item-name">Kerastase Genesis Bain Nutri-Fortifiant Anti Hair-Fortifying Shampoo
-                        </div>
-                        <div class="item-stock">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" />
-                                <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
-                            </svg>
-                            Stok: 200
-                        </div>
-                        <div class="item-bottom">
-                            <div>
-                                <div class="item-price">Rp 1.053.731</div>
-                                <div class="item-subtotal" id="subtotal-3">Subtotal: Rp 1.053.731</div>
-                            </div>
-                            <div class="qty-control">
-                                <button class="qty-btn"
-                                    onclick="changeQty('qty-3', -1, 1053731, 'subtotal-3')">−</button>
-                                <input type="number" id="qty-3" class="qty-input" value="1"
-                                    min="1" max="200"
-                                    onchange="calcSubtotal('qty-3', 1053731, 'subtotal-3')">
-                                <button class="qty-btn"
-                                    onclick="changeQty('qty-3', 1, 1053731, 'subtotal-3')">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn-delete" onclick="removeItem('item-3')" title="Hapus">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- ITEM 4 -->
-                <div class="cart-item" id="item-4">
-                    <div class="item-check">
-                        <input type="checkbox" class="custom-check item-checkbox" onchange="updateSummary()">
-                    </div>
-                    <div
-                        style="width:90px;height:90px;border-radius:14px;background:var(--pink-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFAFD4"
-                            stroke-width="1.5">
-                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z" />
-                            <path d="M12 8v4l3 3" />
-                        </svg>
-                    </div>
-                    <div class="item-info">
-                        <span class="item-badge">Hydration</span>
-                        <div class="item-name">COSRX Salicylic Acid Daily Gentle Cleanser</div>
-                        <div class="item-stock">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" />
-                                <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
-                            </svg>
-                            Stok: 100
-                        </div>
-                        <div class="item-bottom">
-                            <div>
-                                <div class="item-price">Rp 117.000</div>
-                                <div class="item-subtotal" id="subtotal-4">Subtotal: Rp 117.000</div>
-                            </div>
-                            <div class="qty-control">
-                                <button class="qty-btn"
-                                    onclick="changeQty('qty-4', -1, 117000, 'subtotal-4')">−</button>
-                                <input type="number" id="qty-4" class="qty-input" value="1"
-                                    min="1" max="100"
-                                    onchange="calcSubtotal('qty-4', 117000, 'subtotal-4')">
-                                <button class="qty-btn"
-                                    onclick="changeQty('qty-4', 1, 117000, 'subtotal-4')">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn-delete" onclick="removeItem('item-4')" title="Hapus">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- ITEM 5 -->
-                <div class="cart-item" id="item-5">
-                    <div class="item-check">
-                        <input type="checkbox" class="custom-check item-checkbox" checked onchange="updateSummary()">
-                    </div>
-                    <div
-                        style="width:90px;height:90px;border-radius:14px;background:var(--pink-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFAFD4"
-                            stroke-width="1.5">
-                            <path d="M9 3h6l1 4H8L9 3z" />
-                            <path d="M8 7v13a1 1 0 001 1h6a1 1 0 001-1V7" />
-                        </svg>
-                    </div>
-                    <div class="item-info">
-                        <span class="item-badge">Hydration</span>
-                        <div class="item-name">Skin1004 Madagascar Centella Asiatica Toner</div>
-                        <div class="item-stock">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" />
-                                <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
-                            </svg>
-                            Stok: 200
-                        </div>
-                        <div class="item-bottom">
-                            <div>
-                                <div class="item-price">Rp 130.000</div>
-                                <div class="item-subtotal" id="subtotal-5">Subtotal: Rp 130.000</div>
-                            </div>
-                            <div class="qty-control">
-                                <button class="qty-btn"
-                                    onclick="changeQty('qty-5', -1, 130000, 'subtotal-5')">−</button>
-                                <input type="number" id="qty-5 w-8 text-gray-800" class="qty-input" value="1"
-                                    min="1" max="200"
-                                    onchange="calcSubtotal('qty-5', 130000, 'subtotal-5')">
-                                <button class="qty-btn"
-                                    onclick="changeQty('qty-5', 1, 130000, 'subtotal-5')">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn-delete" onclick="removeItem('item-5')" title="Hapus">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
-                        </svg>
-                    </button>
-                </div>
             </div>
 
             <!-- REKOMENDASI -->
@@ -353,17 +146,18 @@
                     </div>
                 </div>
             </div> --}}
-        </div>
+            <button type="submit" id="form_button_submit" hidden>test</button>
+        </form>
 
-        {{-- ── HTML ────────────────────────────────────────────────── --}}
+        {{-- ── SIDE BAR ────────────────────────────────────────────────── --}}
         <div>
             <div class="card summary-card">
                 <div class="card-header">
-                    <h2><span class="dot"></span> Ringkasan Pesanan</h2>
+                    <h2><span class="dot"></span> Form Checkout</h2>
                 </div>
 
                 {{-- Mini pill summary --}}
-                <div class="detail-summary-badge">
+                {{-- <div class="detail-summary-badge">
                     <span class="detail-pill" onclick="openDetailPanel('alamat')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <path
@@ -386,7 +180,7 @@
                         </svg>
                         <span id="pill-pengiriman">+ Pengiriman</span>
                     </span>
-                </div>
+                </div> --}}
 
                 <div class="summary-body">
                     <!-- KODE PROMO -->
@@ -406,7 +200,7 @@
                     </div>
                     <div class="summary-row shipping">
                         <span>Ongkos Kirim</span>
-                        <span id="shipping-cost-display">Rp 15.000</span>
+                        <span id="shipping-cost-display">Pilih saat pembayaran</span>
                     </div>
                     <div class="summary-row">
                         <span>Biaya Layanan</span>
@@ -420,25 +214,31 @@
                         <span class="total-price" id="summary-total">Rp 1.650.731</span>
                     </div>
 
-                    <button class="btn-checkout" onclick="handleCheckout()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5">
-                            <path
-                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                        Checkout Sekarang
-                    </button>
+                    {{-- <button class="btn-checkout" onclick="handleCheckout()"> --}}
+                    {{-- <form action="{{ route('show_payment') }}" method="post">
+                        @csrf --}}
+                        <button 
+                        onclick="document.getElementById('form_button_submit').click();"
+                         class="btn-checkout">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                            Checkout Sekarang
+                        </button>
+                    {{-- </form> --}}
 
-                    <button class="btn-detail-order" onclick="openDetailPanel('alamat')">
+                    {{-- <button class="btn-detail-order" onclick="openDetailPanel('alamat')">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2.5">
                             <circle cx="12" cy="12" r="10" />
                             <path d="M12 8v4l3 3" />
                         </svg>
                         Atur Detail Pesanan
-                    </button>
+                    </button> --}}
 
-                    <a href="{{ route('productMember') }}" class="btn-continue">← Lanjut Belanja</a>
+                    <a href="{{ route('cart_view') }}" class="btn-continue">← Cancel Checkout</a>
 
                     <div class="guarantee-row">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -679,6 +479,16 @@
         </div>
     </div>
 
-    <script src="{{asset('storage/js/payment.js')}}"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="{{ asset('storage/js/payment.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initCart(@json($products));
+            updateSummary();
+        });
+        </script>
+        <script src="{{ asset('storage/js/functionBackend.js') }}"></script>
+
+    {{-- @endpush --}}
 </body>
 </html>

@@ -60,36 +60,38 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
                     @foreach ($products as $data)
                         <!-- PRODUCT CARD -->
-                        <a href="/product/{{ $data->id }}/detail"
+                        <div
                             class="product-card group bg-white rounded-xl overflow-hidden border border-pink-100 hover:border-pink-300 transition-all">
-                            <div class="product-img relative h-32 sm:h-40 bg-pink-50 overflow-hidden">
-                                @if ($data->image)
-                                    <img src="{{ asset('storage/' . $data->image) }}" alt="{{ $data->name }}">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center bg-pink-50">
-                                        <i class="fas fa-image text-2xl text-pink-200"></i>
-                                    </div>
-                                @endif
+                            <a href="/product/{{ $data->id }}/detail">
+                                <div class="product-img relative h-32 sm:h-40 bg-pink-50 overflow-hidden">
+                                    @if ($data->image)
+                                        <img src="{{ asset('storage/' . $data->image) }}" alt="{{ $data->name }}">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center bg-pink-50">
+                                            <i class="fas fa-image text-2xl text-pink-200"></i>
+                                        </div>
+                                    @endif
 
-                                {{-- NEW BADGE - Muncul jika produk ditambah kurang dari 3 jam --}}
-                                @if ($data->created_at->diffInHours(now()) < 3)
-                                    <span
-                                        class="absolute top-1 right-1 bg-pink-500 text-white px-2 py-0.5 rounded text-xs font-bold">NEW</span>
-                                @endif
-                            </div>
-
-                            <div class="p-2.5 sm:p-3">
-                                <h3 class="font-bold text-gray-900 text-xs sm:text-sm line-clamp-2 mb-1">
-                                    {{ $data->name }}</h3>
-                                <p class="text-pink-600 font-bold text-xs sm:text-sm mb-2">Rp
-                                    {{ number_format($data->price, 0, ',', '.') }}</p>
-
-                                <div class="flex justify-between items-center text-xs text-gray-600">
-                                    <span>Stok: {{ $data->stock }}</span>
-                                    <span
-                                        class="text-pink-500 font-semibold group-hover:text-pink-600 opacity-0 group-hover:opacity-100 transition">→</span>
+                                    {{-- NEW BADGE - Muncul jika produk ditambah kurang dari 3 jam --}}
+                                    @if ($data->created_at->diffInHours(now()) < 3)
+                                        <span
+                                            class="absolute top-1 right-1 bg-pink-500 text-white px-2 py-0.5 rounded text-xs font-bold">NEW</span>
+                                    @endif
                                 </div>
-                            </div>
+
+                                <div class="p-2.5 sm:p-3">
+                                    <h3 class="font-bold text-gray-900 text-xs sm:text-sm line-clamp-2 mb-1">
+                                        {{ $data->name }}</h3>
+                                    <p class="text-pink-600 font-bold text-xs sm:text-sm mb-2">Rp
+                                        {{ number_format($data->price, 0, ',', '.') }}</p>
+
+                                    <div class="flex justify-between items-center text-xs text-gray-600">
+                                        <span>Stok: {{ $data->stock }}</span>
+                                        <span
+                                            class="text-pink-500 font-semibold group-hover:text-pink-600 opacity-0 group-hover:opacity-100 transition">→</span>
+                                    </div>
+                                </div>
+                            </a>
 
                             <div class="flex gap-2 p-3">
                                 <!-- Add to Cart Button -->
@@ -97,12 +99,12 @@
                                     class="from-pink-50 to-rose-50 text-pink-600 rounded-xl font-semibold hover:from-pink-100 hover:to-rose-100 transition duration-300 text-center text-sm border border-pink-200 w-full">
                                     Checkout
                                 </button>
-                                <button onclick="event.preventDefault();"
+                                <button onclick="addToCart('{{ route('cart_product_add') }}', '{{ $data->id }}')"
                                     class="w-fit px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold text-center hover:shadow-lg transition duration-300 text-sm">
                                     <i class="fas fa-shopping-bag mr-1"></i>
                                 </button>
                             </div>
-                        </a>
+                        </div>
                     @endforeach
                 </div>
             @else
@@ -120,7 +122,68 @@
         </div>
     </section>
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <x-footer></x-footer>
+    <script>
+        // Notification function
+        function showNotification(message, type = 'info') {
+            // e.preventDefault();
+            const notification = document.createElement('div');
+            notification.textContent = message;
+
+            const bgColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6';
+
+            notification.style.cssText = `
+position: fixed;
+bottom: 30px;
+right: 20px;
+background: ${bgColor};
+color: white;
+padding: 14px 20px;
+border-radius: 10px;
+z-index: 9999;
+font-weight: 600;
+font-size: 14px;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+animation: slideInUp 0.3s ease-out;
+`;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutDown 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 2500);
+        }
+
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+@keyframes slideInUp {
+from {
+transform: translateY(20px);
+opacity: 0;
+}
+to {
+transform: translateY(0);
+opacity: 1;
+}
+}
+
+@keyframes slideOutDown {
+from {
+transform: translateY(0);
+opacity: 1;
+}
+to {
+transform: translateY(20px);
+opacity: 0;
+}
+}
+`;
+        document.head.appendChild(style);
+    </script>
+    <script src="{{ asset('storage/js/functionBackend.js') }}"></script>
 </body>
 
 </html>

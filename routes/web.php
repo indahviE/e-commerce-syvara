@@ -132,9 +132,15 @@ Route::middleware('auth', 'member')->group(function () {
         CartController::class,
         'index'
     ])->name('cart_view');
+
+     Route::post('/cart/add', [
+        CartController::class,
+        'cart_add_product'
+    ])->name('cart_product_add');
+
     Route::post('/my-orders/delete/{id}', [
         CartController::class,
-        'index'
+        'cart_remove_product'
     ])->name('cart_product_delete');
 });
 
@@ -142,7 +148,7 @@ Route::middleware('auth', 'member')->group(function () {});
 
 // checkout(payment)
 Route::middleware('auth', 'member')->group(function () {
-    Route::get('/my-orders/payment', [CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/my-orders/payment', [CheckoutController::class, 'show_payment'])->name('show_payment');
     Route::get('/payment', [CheckoutController::class, 'index'])->name('checkout');
 });
 

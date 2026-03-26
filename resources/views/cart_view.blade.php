@@ -6,90 +6,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keranjang - Syvara</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-     <link rel="stylesheet" href="{{asset('storage/css/payment.css')}}">
+    <link rel="stylesheet" href="{{ asset('storage/css/payment.css') }}">
 </head>
 
 <body>
-
     <!-- NAVBAR -->
     <x-navbar></x-navbar>
 
-    <!-- HERO -->
-    {{-- <section class="relative pt-8 pb-6 px-4">
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-pink-500 rounded-3xl p-8 sm:p-12 shadow-xl">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div>
-                        <h1 class="text-4xl md:text-5xl font-bold mb-3 text-white flex items-center gap-3">
-                          Keranjang Anda
-                        </h1>
-                        <p class="text-pink-100 text-lg">Berikan informasi detail untuk melakukan pengiriman produk yang dipesan.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> --}}
-
     <!-- MAIN CONTENT -->
-    <div class="cart-container">
+    <div class="cart-container" >
+       
 
         <!-- LEFT: CART ITEMS -->
-        <div class="mb-16">
+        <form action="{{route('show_payment')}}" method="post" class="mb-16">
+            @csrf
             <div class="card">
                 <div class="card-header">
                     <h2><span class="dot"></span> Daftar Produk dalam Keranjang</h2>
-                    <span style="font-size:0.8rem;color:var(--text-gray);">5 item</span>
+                    <span style="font-size:0.8rem;color:var(--text-gray);">{{ count($products) }} item</span>
                 </div>
 
                 <!-- ITEM 1 -->
-                <div class="cart-item" id="item-0">
-                    <div
-                        style="width:90px;height:90px;border-radius:14px;background:var(--pink-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);">
-                        <img src="{{ asset('images/products/centella-serum.jpg') }}" onerror="this.style.display='none'"
-                            alt="Centella Serum" class="item-image" style="width:90px;height:90px;position:absolute;">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFAFD4"
-                            stroke-width="1.5">
-                            <path d="M9 3h6l1 4H8L9 3z" />
-                            <path d="M8 7v13a1 1 0 001 1h6a1 1 0 001-1V7" />
-                            <path d="M10 11v6M14 11v6" />
-                        </svg>
-                    </div>
-                    <div class="item-info">
-                        <span class="item-badge">Hydration</span>
-                        <div class="item-name">SKIN1004 Centella Asiatica Serum</div>
-                        <div class="item-stock">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" />
-                                <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
+                @foreach ($products as $data)
+                    <div class="cart-item" id="item-{{ $loop->iteration }}">
+                        <input type="text" type="number" name="id[]" value="{{$data->id}}" hidden>
+                        <a href="/product/{{ $data->id }}/detail"
+                            style="width:90px;height:90px;border-radius:14px;background:var(--pink-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);">
+                            <img src="{{ asset('storage/' . $data->image) }}" onerror="this.style.display='none'"
+                                alt="Centella Serum" class="item-image"
+                                style="width:90px;height:90px;position:absolute;">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFAFD4"
+                                stroke-width="1.5">
+                                <path d="M9 3h6l1 4H8L9 3z" />
+                                <path d="M8 7v13a1 1 0 001 1h6a1 1 0 001-1V7" />
+                                <path d="M10 11v6M14 11v6" />
                             </svg>
-                            Stok: 11
-                        </div>
-                        <div class="item-bottom">
-                            <div>
-                               <div class="item-price">Rp {{ number_format($products[0]['price'], 0, ',', '.') }}</div>
-                                <div class="item-subtotal" id="subtotal-1">Subtotal: Rp {{ number_format($products[0]['price'], 0, ',', '.') }}</div>
+                        </a>
+                        <div class="item-info">
+                            <a href="/product/{{ $data->id }}/detail">
+                                <span class="item-badge">{{ $data->category->category_name }}</span>
+                                <div class="item-name">{{ $data->name }}</div>
+                                <div class="item-stock">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" />
+                                        <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
+                                    </svg>
+                                    Stok: {{ $data->stock }}
+                                </div>
+                            </a>
+                            <div class="item-bottom">
+                                <div>
+                                    <div class="item-price">Rp {{ number_format($data->price, 0, ',', '.') }}
+                                    </div>
+                                    <div class="item-subtotal" id="subtotal-{{ $loop->iteration }}">Subtotal: Rp
+                                        {{ number_format($data->price, 0, ',', '.') }}</div>
+                                </div>
+                                <div class="qty-control">
+                                    <button type="button" class="qty-btn"
+                                        onclick="changeQty('qty-{{ $loop->iteration }}', -1, {{ $data->price }}, 'subtotal-{{ $loop->iteration }}')">−</button>
+                                    <input type="number" id="qty-{{ $loop->iteration }}" class="qty-input"
+                                        value="1" min="1" max="11" name="qtys[]"
+                                        onchange="calcSubtotal('qty-{{ $loop->iteration }}', {{ $data->price }}, 'subtotal-{{ $loop->iteration }}')">
+                                    <button type="button" class="qty-btn"
+                                        onclick="changeQty('qty-{{ $loop->iteration }}', 1, {{ $data->price }}, 'subtotal-{{ $loop->iteration }}')">+</button>
+                                </div>
                             </div>
-                            <div class="qty-control">
-                                <button class="qty-btn"
-                                    onclick="changeQty('qty-0', -1, {{$products[0]['price']}}, 'subtotal-1')">−</button>
-                                <input type="number" id="qty-0" class="qty-input" value="1" min="1"
-                                    max="11" onchange="calcSubtotal('qty-0', {{$products[0]['price']}}, 'subtotal-1')">
-                                <button class="qty-btn" onclick="changeQty('qty-0', 1, {{$products[0]['price']}}, 'subtotal-1')">+</button>
-                            </div>
                         </div>
+                        {{-- <form action="/my-orders/delete/{{ $data->id }}" method="post">
+                            @csrf --}}
+                            <button type="button" onclick="removeProductFromCart('/my-orders/delete/{{ $data->id }}', {{$data->id}});" class="btn-delete" title="Hapus">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
+                                </svg>
+                            </button>
+                        {{-- </form> --}}
                     </div>
-                    <form action="/my-orders/delete/{id}" method="post">
-                        @csrf
-                        <button type="submit" class="btn-delete" title="Hapus">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
-                            </svg>
-                        </button>
-                    </form>
-                </div>
+                @endforeach
 
-                
+
             </div>
 
             <!-- REKOMENDASI -->
@@ -158,7 +153,8 @@
                     </div>
                 </div>
             </div> --}}
-        </div>
+            <button type="submit" id="form_button_submit" hidden>test</button>
+        </form>
 
         {{-- ── SIDE BAR ────────────────────────────────────────────────── --}}
         <div>
@@ -225,14 +221,20 @@
                         <span class="total-price" id="summary-total">Rp 1.650.731</span>
                     </div>
 
-                    <button class="btn-checkout" onclick="handleCheckout()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5">
-                            <path
-                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                        Checkout Sekarang
-                    </button>
+                    {{-- <button class="btn-checkout" onclick="handleCheckout()"> --}}
+                    {{-- <form action="{{ route('show_payment') }}" method="post">
+                        @csrf --}}
+                        <button 
+                        onclick="document.getElementById('form_button_submit').click();"
+                         class="btn-checkout">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                            Checkout Sekarang
+                        </button>
+                    {{-- </form> --}}
 
                     {{-- <button class="btn-detail-order" onclick="openDetailPanel('alamat')">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -483,16 +485,17 @@
             </div>
         </div>
     </div>
-    
-    {{-- @push('scripts') --}}
-    <script src="{{asset('storage/js/payment.js')}}"></script>
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-             initCart(@json($products));
-             updateSummary();
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="{{ asset('storage/js/payment.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initCart(@json($products));
+            updateSummary();
         });
-    </script>
-        
+        </script>
+        <script src="{{ asset('storage/js/functionBackend.js') }}"></script>
+
     {{-- @endpush --}}
 </body>
 
