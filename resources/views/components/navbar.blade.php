@@ -63,11 +63,11 @@
                             </a>
 
                             <!-- Settings Link -->
-                            <a href="/settings"
+                            {{-- <a href="/settings"
                                 class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-pink-50 transition">
                                 <i class="fas fa-cog text-pink-600 w-5"></i>
                                 <span class="font-medium text-sm">Settings</span>
-                            </a>
+                            </a> --}}
 
                             <!-- Admin Menu (Hanya jika admin) -->
                             @if (auth()->user()->role === 'admin')
@@ -82,6 +82,13 @@
                                     class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-pink-50 transition border-t border-gray-100">
                                     <i class="fas fa-shopping-bag text-pink-600 w-5"></i>
                                     <span class="font-medium text-sm">My Orders</span>
+                                </a>
+
+                                <a href="/history"
+                                    class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-pink-50 transition ">
+                                    {{-- <i class="fas fa-shopping-bag text-pink-600 w-5"></i> --}}
+                                    <svg class="text-pink-600" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12.75 11.38V6h-1.5v6l4.243 4.243l1.06-1.06zM12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10"/></svg>
+                                    <span class="font-medium text-sm">History Checkout</span>
                                 </a>
 
                                 <a href="/wishlist"

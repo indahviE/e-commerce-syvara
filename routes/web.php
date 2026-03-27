@@ -133,7 +133,7 @@ Route::middleware('auth', 'member')->group(function () {
         'index'
     ])->name('cart_view');
 
-     Route::post('/cart/add', [
+    Route::post('/cart/add', [
         CartController::class,
         'cart_add_product'
     ])->name('cart_product_add');
@@ -144,12 +144,18 @@ Route::middleware('auth', 'member')->group(function () {
     ])->name('cart_product_delete');
 });
 
-Route::middleware('auth', 'member')->group(function () {});
+// orders
+Route::middleware('auth', 'admin')->group(function () {
+    Route::get('/orders', [CheckoutController::class, 'order_view'])->name('order_view');
+    Route::patch('/orders/{order}/status', [CheckoutController::class, 'updateStatus'])->name('admin.orders.status');
+});
 
 // checkout(payment)
 Route::middleware('auth', 'member')->group(function () {
     Route::post('/my-orders/payment', [CheckoutController::class, 'show_payment'])->name('show_payment');
-    Route::get('/payment', [CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/apply/discount', [CheckoutController::class, 'CheckPromo'])->name('check_promo');
+    Route::post('/checkout', [CheckoutController::class, 'Checkout'])->name('checkout');
+    Route::post('/payment', [CheckoutController::class, 'index'])->name('show_single_payment');
 });
 
 Route::middleware('auth', 'member')->group(function () {

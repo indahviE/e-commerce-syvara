@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\CartDetail;
+use App\Models\Orders;
 use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,26 +14,26 @@ class CartController extends Controller
     // Tampilkan halaman 
     public function index()
     {
-       if (!Auth::check()) {
-    return redirect('/login');
-}
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
 
-$user = Auth::user();
-$cart = Cart::where('user_id', $user->id)->first();
+        $user = Auth::user();
+        $cart = Cart::where('user_id', $user->id)->first();
 
-// kalau belum punya cart, kembalikan keranjang kosong
-if (!$cart) {
-    return view('cart_view', ['products' => []]);
-}
+        // kalau belum punya cart, kembalikan keranjang kosong
+        if (!$cart) {
+            return view('cart_view', ['products' => []]);
+        }
 
-$cartDetails = CartDetail::where('cart_id', $cart->id)
-                ->with('product.category') // eager load relasi product
-                ->get();
+        $cartDetails = CartDetail::where('cart_id', $cart->id)
+            ->with('product.category') // eager load relasi product
+            ->get();
 
-// ambil product nya aja (fungsi map.js di laravl)
-$products = $cartDetails->pluck('product');
+        // ambil product nya aja (fungsi map.js di laravl)
+        $products = $cartDetails->pluck('product');
 
-return view('cart_view', ['products' => $products]);
+        return view('cart_view', ['products' => $products]);
     }
     // Tampilkan halaman
     public function history()
@@ -41,16 +42,26 @@ return view('cart_view', ['products' => $products]);
             return redirect('/login');
         }
 
-        return view('history_view', ['orders' => []]);
+        $orders = Orders::where('user_id', Auth::id())
+            ->with([
+                'orderDetails.product.category',
+                'voucher'
+            ])
+            ->latest()
+            ->when(request('status'), fn($q, $s) => $q->where('status_order', $s))
+            ->paginate(10);
+
+        // dd($orders);
+        return view('history_view', ['orders' => $orders]);
     }
 
     public function cart_add_product(Request $request)
     {
-        
+
         if (!Auth::check()) {
             // return redirect('/login');
 
-             return response()->json(['success' => false, 'message' => 'UnAuth'], 400);
+            return response()->json(['success' => false, 'message' => 'UnAuth'], 400);
         }
 
         $cart = Cart::where('user_id', Auth::user()->id)->first();
@@ -70,16 +81,17 @@ return view('cart_view', ['products' => $products]);
         return response()->json(['success' => true, 'message' => 'Berhasil masuk ke keranjang!'], 200);
     }
 
-    public function cart_remove_product(Request $request, $produk_id){
-         if (!Auth::check()) {
+    public function cart_remove_product(Request $request, $produk_id)
+    {
+        if (!Auth::check()) {
             // return redirect('/login');
-             return response()->json(['success' => false, 'message' => 'UnAuth'], 400);
-             }
-             
-             $cart = Cart::where('user_id', Auth::user()->id)->first();
-             CartDetail::where('cart_id', $cart->id)->where('product_id', $produk_id)->delete();
-             
-            //  return redirect('/my-orders');
-             return response()->json(['success' => true, 'message' => 'ok'], 200);
+            return response()->json(['success' => false, 'message' => 'UnAuth'], 400);
+        }
+
+        $cart = Cart::where('user_id', Auth::user()->id)->first();
+        CartDetail::where('cart_id', $cart->id)->where('product_id', $produk_id)->delete();
+
+        //  return redirect('/my-orders');
+        return response()->json(['success' => true, 'message' => 'ok'], 200);
     }
 }
