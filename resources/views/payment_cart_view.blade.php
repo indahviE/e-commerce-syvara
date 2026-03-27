@@ -15,7 +15,7 @@
 
     <!-- MAIN CONTENT -->
     <div class="cart-container" >
-       
+    
 
         <!-- LEFT: CART ITEMS -->
         <form action="{{route('show_payment')}}" method="post" class="mb-16">
@@ -73,7 +73,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                 @endforeach
 
@@ -217,7 +217,7 @@
                     {{-- <button class="btn-checkout" onclick="handleCheckout()"> --}}
                     {{-- <form action="{{ route('show_payment') }}" method="post">
                         @csrf --}}
-                        <button 
+                        <button
                         onclick="document.getElementById('form_button_submit').click();"
                          class="btn-checkout">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"

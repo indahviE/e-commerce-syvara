@@ -17,6 +17,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        // dd(Hash::make("12345678"));
         return view('auth.login');
     }
 

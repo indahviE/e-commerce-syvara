@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keranjang - Syvara</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('storage/css/payment.css') }}">
 </head>
@@ -15,7 +17,6 @@
 
     <!-- MAIN CONTENT -->
     <div class="cart-container" >
-       
 
         <!-- LEFT: CART ITEMS -->
         <form action="{{route('show_payment')}}" method="post" class="mb-16">
@@ -224,7 +225,7 @@
                     {{-- <button class="btn-checkout" onclick="handleCheckout()"> --}}
                     {{-- <form action="{{ route('show_payment') }}" method="post">
                         @csrf --}}
-                        <button 
+                        <button
                         onclick="document.getElementById('form_button_submit').click();"
                          class="btn-checkout">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
