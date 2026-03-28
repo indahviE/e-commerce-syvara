@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     public function view_category(){
-        $category = Category::all();
-        return view('category', ['category' => $category]);
+        $category = Category::has('products')->with('products')->get();
+        return view('category', ['categories' => $category]);
     }
     public function viewAdminCategory() {
         $category = Category::all();

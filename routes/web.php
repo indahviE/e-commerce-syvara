@@ -161,6 +161,7 @@ Route::middleware('auth', 'member')->group(function () {
 
 Route::middleware('auth', 'member')->group(function () {
     Route::get('/history', [CartController::class, 'history'])->name('history');
+    Route::patch('/history/{order}', [CartController::class, 'cancelOrder'])->name('cancelOrder');
 });
 
 Route::get("/product", function () {

@@ -146,16 +146,16 @@
                                 <div>
                                     <label class="field-label">Nama Penerima</label>
                                     <input type="text" value="{{ Auth::user()->name }}" name="nama_penerima" class="field-input"
-                                        id="f-nama" placeholder="Nama lengkap penerima">
+                                        id="f-nama" placeholder="Nama lengkap penerima" required>
                                 </div>
                                 <div>
                                     <label class="field-label">Nomor Telepon</label>
-                                    <input type="tel" class="field-input" id="f-telp" name="no_telp" placeholder="08xxxxxxxxxx">
+                                    <input type="tel" class="field-input" id="f-telp" name="no_telp" placeholder="08xxxxxxxxxx" required>
                                 </div>
                                 <div class="field-row">
                                     <div>
                                         <label class="field-label">Provinsi</label>
-                                        <select class="field-select" id="f-provinsi" name="provinsi">
+                                        <select class="field-select" id="f-provinsi" name="provinsi" required>
                                             <option value="">Pilih Provinsi</option>
                                             <option>Jawa Barat</option>
                                             <option>Jawa Tengah</option>
@@ -171,7 +171,7 @@
                                     </div>
                                     <div>
                                         <label class="field-label">Kota / Kabupaten</label>
-                                        <input type="text" class="field-input" id="f-kota"
+                                        <input type="text" class="field-input" id="f-kota" required
                                             placeholder="Nama kota" name="kabupaten">
                                     </div>
                                 </div>
@@ -179,17 +179,17 @@
                                     <div>
                                         <label class="field-label">Kecamatan</label>
                                         <input type="text" class="field-input" id="f-kec"
-                                            placeholder="Kecamatan" name="kecamatan">
+                                            placeholder="Kecamatan" name="kecamatan" required>
                                     </div>
                                     <div>
                                         <label class="field-label">Kode Pos</label>
-                                        <input type="text" class="field-input" name="kode_pos" id="f-kodepos" placeholder="12345"
+                                        <input type="text" class="field-input" name="kode_pos" id="f-kodepos" required placeholder="12345"
                                             maxlength="5">
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="field-label">Alamat Lengkap (opsional)</label>
-                                    <textarea class="field-input" name="alamat" id="f-alamat" rows="3" placeholder="Jl. Nama Jalan No. xx, RT/RW, Kelurahan..."
+                                    <label class="field-label">Alamat Lengkap</label>
+                                    <textarea class="field-input" name="alamat" required id="f-alamat" rows="3" placeholder="Jl. Nama Jalan No. xx, RT/RW, Kelurahan..."
                                         style="resize:vertical; line-height:1.5;"> </textarea>
                                 </div>
                                 <div>

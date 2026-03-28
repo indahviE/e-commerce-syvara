@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    // Tampilkan halaman 
+    // Tampilkan halaman
     public function index()
     {
         if (!Auth::check()) {
@@ -93,5 +93,12 @@ class CartController extends Controller
 
         //  return redirect('/my-orders');
         return response()->json(['success' => true, 'message' => 'ok'], 200);
+    }
+
+    public function cancelOrder(Request $request, Orders $order){
+        $request->validate(['status_order' => 'required|in:Dibatalkan']);
+        $order->update(['status_order' => $request->status_order]);
+        // dd("ok");
+        return back()->with('success', 'Status pesanan #' . $order->id . ' berhasil diperbarui.');
     }
 }

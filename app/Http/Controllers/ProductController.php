@@ -10,47 +10,66 @@ use App\Http\Controllers\disk;
 
 class ProductController extends Controller
 {
-    public function view_product(Request $request) {
-        $s = $request->s;
-        if(!$s) {
-            $s = '';
-            $product = Products::all();
-        } else {
-            $product = Products::where('name', 'like', "%$s%")->get();
-        }
-        $products = Products::with('category')
-        // ->where('price', '>', 50000) //untuk harga diatas 5k
-        ->get();
-        // dd($products);
+    public function view_product(Request $request)
+    {
+        $s            = $request->s ?? '';
+        $categoryName = $request->category_name;
+        $categoryId   = $request->id;
 
-        return view('product', ["products" => $products, 'search' => $s]);
+        $products = Products::with('category')
+            ->when($s, fn($q) => $q->where('name', 'like', "%$s%"))
+            ->when($categoryId,   fn($q) => $q->where('category_id', $categoryId))
+            ->when($categoryName, fn($q) => $q->whereHas(
+                'category',
+                fn($q2) =>
+                $q2->where('category_name', $categoryName)
+            ))
+            ->get();
+
+        $categories = Category::has('products')->get();
+
+        return view('product', [
+            'categories' => $categories,
+            'products'   => $products,
+            'search'     => $s,
+        ]);
     }
-    public function viewAdminProduct() {
+    public function viewAdminProduct()
+    {
         $products = Products::with('category')->get();
         return view('productAdmin', ['products' => $products]);
     }
-    public function product_detail($id) {
+    public function product_detail($id)
+    {
         $product = Products::findOrFail($id);
         $categories = Category::all();
         $relatedProducts = Products::where('category_id', $product->category_id)
-                                    ->where('id', '!=', $id)
-                                    ->limit(5)
-                                    ->get();
-        return view('productMain', ['product' => $product, 'categories' => $categories,
-        'relatedProducts' => $relatedProducts]);
+            ->where('id', '!=', $id)
+            ->limit(5)
+            ->get();
+        return view('productMain', [
+            'product' => $product,
+            'categories' => $categories,
+            'relatedProducts' => $relatedProducts
+        ]);
     }
-    public function view_create_product() {
+    public function view_create_product()
+    {
         $categories = Category::all();
         return view('create_product', compact('categories'));
     }
-    public function view_update_product($id) {
+    public function view_update_product($id)
+    {
         $product = Products::findOrFail($id);
         $categories = Category::all();
-        return view('update_product', ["product" => $product,
-        "categories" => $categories]);
+        return view('update_product', [
+            "product" => $product,
+            "categories" => $categories
+        ]);
     }
 
-    public function create_product(Request $request) {
+    public function create_product(Request $request)
+    {
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
@@ -69,33 +88,34 @@ class ProductController extends Controller
         ]);
 
         $exists = Products::where('name', $request->name)
-        ->where('category_id', $request->category_id)
-        ->exists();
+            ->where('category_id', $request->category_id)
+            ->exists();
 
-        if($exists) {
-            return back()->withErrors(['name'=> 'Produk dengan nama kategori ini sudah ada!']);
+        if ($exists) {
+            return back()->withErrors(['name' => 'Produk dengan nama kategori ini sudah ada!']);
         }
 
-        if($request->hasFile('image')) {
+        if ($request->hasFile('image')) {
             $image = $request->image->store('images', 'public');
         } else {
             $image = null;
         }
         Products::create([
-            'name' =>$request->name,
-            'category_id' =>$request->category_id,
-            'price' =>$request->price,
-            'stock' =>$request->stock,
-            'description' =>$request->description,
-            'image' =>$image,
+            'name' => $request->name,
+            'category_id' => $request->category_id,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'description' => $request->description,
+            'image' => $image,
         ]);
         return redirect('/admin/product')->with('success', 'Produk berhasil ditambahkan!');
     }
 
-    public function update_product(Request $request, $id) {
+    public function update_product(Request $request, $id)
+    {
         $product = Products::find($id);
 
-            $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
             'stock' => 'required|integer',
@@ -113,15 +133,15 @@ class ProductController extends Controller
         ]);
 
         $exists = Products::where('name', $request->name)
-        ->where('category_id', $request->category_id)
-        ->where('id', '!=', $product->id)
-        ->exists();
+            ->where('category_id', $request->category_id)
+            ->where('id', '!=', $product->id)
+            ->exists();
 
-        if($exists) {
-            return back()->withErrors(['name'=> 'Produk dengan nama kategori ini sudah ada!']);
+        if ($exists) {
+            return back()->withErrors(['name' => 'Produk dengan nama kategori ini sudah ada!']);
         }
-        if($request->hasFile('gambar')) {
-            if($product->image){
+        if ($request->hasFile('gambar')) {
+            if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
             $request['image'] = $request->gambar->store('images', 'public');
@@ -135,10 +155,11 @@ class ProductController extends Controller
         return redirect()->route('ProductAdmin')->with('success', 'Produk telah ter-update');
     }
 
-    public function delete_product($id) {
+    public function delete_product($id)
+    {
         $product = Products::find($id);
 
-        if($product->image) {
+        if ($product->image) {
             Storage::disk('public')->delete($product->image);
         }
         $product->delete();

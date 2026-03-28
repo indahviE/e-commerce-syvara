@@ -80,6 +80,12 @@
                                 </div>
 
                                 <div class="p-2.5 sm:p-3">
+                                    <div class="mb-2">
+                                        <span
+                                            class="inline-block text-xs font-bold text-pink-600 bg-pink-50 px-2.5 py-1 rounded-full border border-pink-200">
+                                            {{ $category->category_name ?? 'Produk' }}
+                                        </span>
+                                    </div>
                                     <h3 class="font-bold text-gray-900 text-xs sm:text-sm line-clamp-2 mb-1">
                                         {{ $data->name }}</h3>
                                     <p class="text-pink-600 font-bold text-xs sm:text-sm mb-2">Rp
@@ -95,7 +101,7 @@
 
                             <form action="{{ route('show_single_payment') }}" method="post" class="flex gap-2 p-3">
                                 <!-- Add to Cart Button -->
-                               @csrf
+                                @csrf
                                 <select name="qty" id="">
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -109,7 +115,7 @@
                                     <option value="10">10</option>
                                     <option value="11">11</option>
                                 </select>
-                                <input type="text" value="{{$data->id}}" name="produk_id" hidden>
+                                <input type="text" value="{{ $data->id }}" name="produk_id" hidden>
                                 <button type="submit"
                                     class="from-pink-50 to-rose-50 text-pink-600 rounded-xl font-semibold hover:from-pink-100 hover:to-rose-100 transition duration-300 text-center text-sm border border-pink-200 w-full">
                                     Checkout
