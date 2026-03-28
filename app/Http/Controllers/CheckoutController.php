@@ -131,6 +131,12 @@ class CheckoutController extends Controller
                 "harga_saat_ini" => $product->price,
                 "qty" => $request->qtys[$i]
             ]);
+
+            // $product["stock"] -= $request->qtys[$i];
+            $product->stock -= $request->qtys[$i];
+            $product->save();
+
+            // dd($product);
         }
 
         // dd($request->all());
