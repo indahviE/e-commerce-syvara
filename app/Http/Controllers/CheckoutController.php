@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\CartDetail;
 use App\Models\OrderDetail;
 use App\Models\Orders;
 use App\Models\Products;
@@ -120,6 +122,7 @@ class CheckoutController extends Controller
         $order = Orders::create($request->all());
 
         // order DETAIL :)
+        $cart = Cart::where('user_id', Auth::id())->first();
 
         for ($i = 0; $i < count($request->id); $i++) {
             # code...
@@ -137,6 +140,12 @@ class CheckoutController extends Controller
             $product->save();
 
             // dd($product);
+            if ($cart) {
+                $cart_detail = CartDetail::where("cart_id", $cart->id)->where('product_id', $product->id)->first();
+                if ($cart_detail)
+                    $cart_detail->delete();
+            }
+            // delete product from cart
         }
 
         // dd($request->all());
