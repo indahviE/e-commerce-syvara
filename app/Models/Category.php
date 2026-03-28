@@ -11,7 +11,18 @@ class Category extends Model
     protected $fillable = [
         'category_name'
     ];
-    public function products() {
-        return $this->hasMany(Products::class);
+
+    /**
+     * Many-to-many relationship dengan Products
+     * Satu kategori bisa punya banyak produk
+     */
+    public function products()
+    {
+        return $this->belongsToMany(
+            Products::class,
+            'product_categories',
+            'category_id',
+            'product_id'
+        );
     }
 }

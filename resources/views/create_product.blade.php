@@ -51,18 +51,37 @@
                             @enderror
                         </div>
 
+                        <!-- Multiple Category Selection -->
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">
-                                <i class="fas fa-list mr-2 text-pink-600"></i> Kategori
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-list mr-2 text-pink-600"></i> Kategori (Pilih 1 atau lebih)
                             </label>
-                            <select name="category_id" class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 bg-white">
-                                <option value="">-- Pilih Kategori --</option>
+
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-2">
                                 @foreach ($categories as $cat)
-                                    <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
-                                        {{ $cat->category_name }}
-                                    </option>
+                                    <label class="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-pink-300 hover:bg-pink-50 transition"
+                                        data-category="{{ $cat->id }}">
+                                        <input type="checkbox" name="category_ids[]" value="{{ $cat->id }}"
+                                            {{ in_array($cat->id, old('category_ids', [])) ? 'checked' : '' }}
+                                            class="w-5 h-5 text-pink-600 rounded cursor-pointer category-checkbox">
+                                        <span class="flex-1 font-semibold text-gray-700">{{ $cat->category_name }}</span>
+                                    </label>
                                 @endforeach
-                            </select>
+                            </div>
+
+                            <!-- Display selected categories -->
+                            <div id="selectedCategories" class="mt-3 p-3 bg-pink-50 border border-pink-200 rounded-lg hidden">
+                                <p class="text-sm font-semibold text-gray-700 mb-2">Kategori Terpilih:</p>
+                                <div id="selectedList" class="flex flex-wrap gap-2">
+                                    <!-- dinamis dengan JS -->
+                                </div>
+                            </div>
+
+                            @error('category_ids')
+                                <div class="mt-2 p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm flex items-center gap-2">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -124,5 +143,41 @@
     </section>
 
     <x-footer></x-footer>
+
+    <script>
+        // Update selected categories display
+        const checkboxes = document.querySelectorAll('.category-checkbox');
+        const selectedCategories = document.getElementById('selectedCategories');
+        const selectedList = document.getElementById('selectedList');
+
+        function updateSelectedCategories() {
+            const selected = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => {
+                    const label = cb.closest('label');
+                    return label.querySelector('span').textContent.trim();
+                });
+
+            if (selected.length > 0) {
+                selectedCategories.classList.remove('hidden');
+                selectedList.innerHTML = selected.map(cat =>
+                    `<span class="inline-flex items-center gap-1 px-3 py-1 bg-pink-600 text-white rounded-full text-sm font-semibold">
+                        ${cat}
+                        <i class="fas fa-check"></i>
+                    </span>`
+                ).join('');
+            } else {
+                selectedCategories.classList.add('hidden');
+            }
+        }
+
+        // Event listener untuk setiap checkbox
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCategories);
+        });
+
+        // Initial render
+        updateSelectedCategories();
+    </script>
 </body>
 </html>
