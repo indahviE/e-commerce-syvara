@@ -93,9 +93,24 @@
                                 </div>
                             </a>
 
-                            <div class="flex gap-2 p-3">
+                            <form action="{{ route('show_single_payment') }}" method="post" class="flex gap-2 p-3">
                                 <!-- Add to Cart Button -->
-                                <button onclick="event.preventDefault();"
+                               @csrf
+                                <select name="qty" id="">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                </select>
+                                <input type="text" value="{{$data->id}}" name="produk_id" hidden>
+                                <button type="submit"
                                     class="from-pink-50 to-rose-50 text-pink-600 rounded-xl font-semibold hover:from-pink-100 hover:to-rose-100 transition duration-300 text-center text-sm border border-pink-200 w-full">
                                     Checkout
                                 </button>
@@ -103,7 +118,7 @@
                                     class="w-fit px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold text-center hover:shadow-lg transition duration-300 text-sm">
                                     <i class="fas fa-shopping-bag mr-1"></i>
                                 </button>
-                            </div>
+                            </form>
                         </div>
                     @endforeach
                 </div>

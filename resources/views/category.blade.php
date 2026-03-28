@@ -22,18 +22,20 @@
 <body class="bg-gray-50">
     <x-navbar></x-navbar>
 
-    <!-- Header Section -->
-    <section class="py-8 px-4 bg-gradient-to-r from-pink-50 to-pink-100">
+    <!-- Hero Section -->
+    <section class="relative pt-8 pb-6 px-4">
         <div class="max-w-7xl mx-auto">
-            <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl p-8 shadow-lg">
+            <div class="bg-pink-500 rounded-3xl p-8 sm:p-12 shadow-xl">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                     <div>
-                        <h1 class="text-4xl md:text-5xl font-bold text-white mb-3">Kategori Produk</h1>
+                        <h1 class="text-4xl md:text-5xl font-bold mb-3 text-white flex items-center gap-3">
+                            <i class="fas fa-sparkles"></i>Kategori Produk
+                        </h1>
                         <p class="text-pink-100 text-lg">Jelajahi kategori skincare sesuai dengan kebutuhan kulit Anda</p>
                     </div>
-                    <a href="/about" class="inline-flex items-center gap-2 px-8 py-4 bg-white text-pink-500 rounded-xl font-semibold hover:bg-gray-50 hover:shadow-md transition duration-300">
-                        <i class="fas fa-arrow-right"></i>
-                        Pelajari Lebih Lanjut
+                    <a href="/about"
+                        class="inline-flex items-center gap-2 px-8 py-4 bg-white text-pink-600 rounded-xl font-bold hover:bg-pink-50 hover:shadow-lg transition duration-300 whitespace-nowrap">
+                        <i class="fas fa-info-circle"></i> Pelajari Lebih
                     </a>
                 </div>
             </div>
