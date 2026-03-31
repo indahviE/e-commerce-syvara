@@ -18,9 +18,7 @@ class Products extends Model
         'image',
         'category_id'
     ];
-    public function category() {
-        return $this->belongsTo(Category::class);
-    }
+
     public function wishlists()
     {
         return $this->hasMany(Wishlist::class);
@@ -31,16 +29,26 @@ class Products extends Model
         return $this->belongsToMany(User::class, 'wishlists');
     }
     public function isWishlisted()
-        {
-            $user = Auth::user();  // Ganti auth() dengan Auth::user()
+    {
+        $user = Auth::user();  // Ganti auth() dengan Auth::user()
 
-            if (!$user) {
-                return false;
-            }
+        if (!$user) {
+            return false;
+        }
 
-            return Wishlist::where('user_id', $user->id)
-                ->where('product_id', $this->id)
-                ->exists();
+        return Wishlist::where('user_id', $user->id)
+            ->where('product_id', $this->id)
+            ->exists();
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'product_categories', 'product_id', 'category_id');
+    }
+
+
+    public function getCategoryIdsAttribute()
+    {
+        return $this->categories->pluck('id')->toArray();
     }
 }
-

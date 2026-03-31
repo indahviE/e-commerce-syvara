@@ -204,10 +204,13 @@
                                         <div class="p-4">
                                             <!-- Category Badge -->
                                             <div class="mb-2">
-                                                <span
-                                                    class="inline-block text-xs font-bold text-pink-600 bg-pink-50 px-2.5 py-1 rounded-full border border-pink-200">
-                                                    {{ $data->category->category_name ?? 'Produk' }}
-                                                </span>
+                                                @foreach ($data->categories as $category)
+                                                    <span
+                                                        class="inline-block mb-1 text-xs font-bold text-pink-600 bg-pink-50 px-2.5 py-1 rounded-full border border-pink-200">
+                                                        {{ $category->category_name }}
+                                                    </span>
+                                                @endforeach
+                                               
                                             </div>
 
                                             <!-- Product Name -->

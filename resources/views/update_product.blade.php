@@ -47,16 +47,32 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">
-                                <i class="fas fa-list mr-2 text-yellow-600"></i> Kategori
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-list mr-2 text-yellow-600"></i> Kategori (Pilih 1 atau lebih)
                             </label>
-                            <select name="category_id" class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 bg-white">
+
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-2">
                                 @foreach ($categories as $cat)
-                                    <option value="{{ $cat->id }}" {{ $product->category_id == $cat->id ? 'selected' : '' }}>
-                                        {{ $cat->category_name }}
-                                    </option>
+                                    <label class="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-yellow-300 hover:bg-yellow-50 transition"
+                                        data-category="{{ $cat->id }}">
+                                        <input type="checkbox" name="category_ids[]" value="{{ $cat->id }}"
+                                            {{ in_array($cat->id, old('category_ids', $product->categoryIds)) ? 'checked' : '' }}
+                                            class="w-5 h-5 text-yellow-600 rounded cursor-pointer category-checkbox">
+                                        <span class="flex-1 font-semibold text-gray-700">{{ $cat->category_name }}</span>
+                                    </label>
                                 @endforeach
-                            </select>
+                            </div>
+
+                            <div id="selectedCategories" class="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg hidden">
+                                <p class="text-sm font-semibold text-gray-700 mb-2">Kategori Terpilih:</p>
+                                <div id="selectedList" class="flex flex-wrap gap-2"></div>
+                            </div>
+
+                            @error('category_ids')
+                                <div class="mt-2 p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm flex items-center gap-2">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -114,5 +130,33 @@
     </section>
 
     <x-footer></x-footer>
+
+    <script>
+        const checkboxes = document.querySelectorAll('.category-checkbox');
+        const selectedCategories = document.getElementById('selectedCategories');
+        const selectedList = document.getElementById('selectedList');
+
+        function updateSelectedCategories() {
+            const selected = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.closest('label').querySelector('span').textContent.trim());
+
+            if (selected.length > 0) {
+                selectedCategories.classList.remove('hidden');
+                selectedList.innerHTML = selected.map(cat =>
+                    `<span class="inline-flex items-center gap-1 px-3 py-1 bg-yellow-600 text-white rounded-full text-sm font-semibold">
+                        ${cat}
+                        <i class="fas fa-check"></i>
+                    </span>`
+                ).join('');
+            } else {
+                selectedCategories.classList.add('hidden');
+                selectedList.innerHTML = '';
+            }
+        }
+
+        checkboxes.forEach(checkbox => checkbox.addEventListener('change', updateSelectedCategories));
+        updateSelectedCategories();
+    </script>
 </body>
 </html>

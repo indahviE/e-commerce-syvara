@@ -127,7 +127,7 @@
                         </a>
                         <div class="item-info">
                             <a href="/product/{{ $data->id }}/detail">
-                                <span class="item-badge">{{ $data->category->category_name }}</span>
+                                <span class="item-badge">{{ $data->categories->pluck('category_name')->join(', ') }}</span>
                                 <div class="item-name">{{ $data->name }}</div>
                                 <div class="item-stock">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

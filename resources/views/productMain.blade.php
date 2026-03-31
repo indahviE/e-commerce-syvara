@@ -100,7 +100,7 @@
                         @endauth
                     </div>
                     <span class="inline-block px-4 py-2 bg-pink-100 text-pink-700 rounded-lg text-sm font-semibold">
-                        <i class="fas fa-tag mr-2"></i> {{ $product->category->category_name ?? 'Uncategorized' }}
+                        <i class="fas fa-tag mr-2"></i> {{ $product->category_names ?: 'Uncategorized' }}
                     </span>
                 </div>
 
@@ -260,7 +260,7 @@
                                 <div class="mb-2">
                                     <span
                                         class="inline-block text-xs font-bold text-pink-600 bg-pink-50 px-2.5 py-1 rounded-full border border-pink-200">
-                                        {{ $related->category->category_name ?? 'Produk' }}
+                                        {{ $related->category_names ?: 'Produk' }}
                                     </span>
                                 </div>
 
@@ -301,7 +301,7 @@
                         <div class="flex justify-between">
                             <span class="text-gray-600">Kategori:</span>
                             <span
-                                class="font-semibold text-gray-900">{{ $product->category->category_name ?? '-' }}</span>
+                                class="font-semibold text-gray-900">{{ $product->category_names ?: '-' }}</span>
                         </div>
                         <div class="flex justify-between border-t border-gray-300 pt-3">
                             <span class="text-gray-600">Harga:</span>
