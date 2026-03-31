@@ -13,16 +13,11 @@ class Category extends Model
     ];
 
     /**
-     * Many-to-many relationship dengan Products
-     * Satu kategori bisa punya banyak produk
+     * One-to-many relationship dengan Products
+     * Satu kategori punya banyak produk
      */
     public function products()
     {
-        return $this->belongsToMany(
-            Products::class,
-            'product_categories',
-            'category_id',
-            'product_id'
-        );
+        return $this->hasMany(Products::class);
     }
 }
