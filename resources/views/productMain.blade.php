@@ -100,7 +100,7 @@
                         @endauth
                     </div>
                     <span class="inline-block px-4 py-2 bg-pink-100 text-pink-700 rounded-lg text-sm font-semibold">
-                        <i class="fas fa-tag mr-2"></i> {{ $product->category_names ?: 'Uncategorized' }}
+                        <i class="fas fa-tag mr-2"></i> {{ $product->category_names ?: 'Kategori tidak tersedia' }}
                     </span>
                 </div>
 
@@ -321,13 +321,37 @@
                 </div>
 
                 <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Panduan Penggunaan</h3>
-                    <div class="space-y-3 text-sm text-gray-700">
-                        <p><strong>Frekuensi:</strong> Gunakan 1-2 kali sehari</p>
-                        <p><strong>Cara Pakai:</strong> Oleskan secara merata ke wajah yang sudah dibersihkan</p>
-                        <p><strong>Waktu Terbaik:</strong> Pagi dan malam sebelum tidur</p>
-                        <p><strong>Hasil:</strong> Terlihat dalam 2-4 minggu penggunaan teratur</p>
-                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-6">Panduan Penggunaan</h3>
+                    @if($guides->isNotEmpty())
+                        <div class="space-y-6">
+                            @foreach($guides as $guide)
+                                <div class="rounded-3xl bg-white border border-pink-100 p-6">
+                                    <div class="grid gap-4 md:grid-cols-2">
+                                        <div>
+                                            <p class="text-sm text-gray-500">Frekuensi</p>
+                                            <p class="mt-2 text-gray-900 font-semibold">{{ $guide->frekuensi }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-500">Waktu Terbaik</p>
+                                            <p class="mt-2 text-gray-900 font-semibold">{{ $guide->waktu_terbaik }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-5">
+                                        <p class="text-sm text-gray-500">Cara Pakai</p>
+                                        <p class="mt-2 text-gray-900">{{ $guide->cara_pakai }}</p>
+                                    </div>
+                                    <div class="mt-4">
+                                        <p class="text-sm text-gray-500">Hasil yang Diharapkan</p>
+                                        <p class="mt-2 text-gray-900">{{ $guide->hasil }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="rounded-3xl border border-dashed border-pink-200 bg-white p-6 text-gray-500">
+                            Panduan penggunaan untuk produk ini belum tersedia. Silakan periksa kembali nanti.
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -338,62 +362,24 @@
         <div class="max-w-4xl mx-auto">
             <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Pertanyaan Umum</h2>
             <div class="space-y-4">
-                <details class="bg-white p-6 rounded-lg border border-pink-200 group cursor-pointer">
-                    <summary
-                        class="flex justify-between items-center font-bold text-gray-900 hover:text-pink-600 transition">
-                        <span class="flex items-center gap-3">
-                            <i class="fas fa-plus text-pink-600 group-open:hidden"></i>
-                            <i class="fas fa-minus text-pink-600 hidden group-open:block"></i>
-                            Apakah produk ini cocok untuk kulit saya?
-                        </span>
-                    </summary>
-                    <p class="text-gray-700 mt-4 ml-8">Produk ini dirancang untuk semua jenis kulit, termasuk kulit
-                        sensitif. Namun, kami merekomendasikan melakukan patch test terlebih dahulu jika Anda memiliki
-                        kulit yang sangat sensitif atau alergi terhadap bahan-bahan tertentu.</p>
-                </details>
-
-                <details class="bg-white p-6 rounded-lg border border-pink-200 group cursor-pointer">
-                    <summary
-                        class="flex justify-between items-center font-bold text-gray-900 hover:text-pink-600 transition">
-                        <span class="flex items-center gap-3">
-                            <i class="fas fa-plus text-pink-600 group-open:hidden"></i>
-                            <i class="fas fa-minus text-pink-600 hidden group-open:block"></i>
-                            Berapa lama hasil akan terlihat?
-                        </span>
-                    </summary>
-                    <p class="text-gray-700 mt-4 ml-8">Hasil awal biasanya terlihat dalam 2-4 minggu dengan penggunaan
-                        teratur. Hasil maksimal dapat dicapai dalam 8-12 minggu, tergantung kondisi kulit individual dan
-                        konsistensi penggunaan.</p>
-                </details>
-
-                <details class="bg-white p-6 rounded-lg border border-pink-200 group cursor-pointer">
-                    <summary
-                        class="flex justify-between items-center font-bold text-gray-900 hover:text-pink-600 transition">
-                        <span class="flex items-center gap-3">
-                            <i class="fas fa-plus text-pink-600 group-open:hidden"></i>
-                            <i class="fas fa-minus text-pink-600 hidden group-open:block"></i>
-                            Apakah ada efek samping?
-                        </span>
-                    </summary>
-                    <p class="text-gray-700 mt-4 ml-8">Produk kami telah teruji dermatologi dan tidak memiliki efek
-                        samping yang signifikan. Namun, beberapa orang mungkin mengalami sedikit kemerahan atau
-                        ketidaknyamanan pada awal penggunaan karena proses adaptasi kulit. Jika ini terjadi, kurangi
-                        frekuensi penggunaan dan konsultasikan dengan dermatolog.</p>
-                </details>
-
-                <details class="bg-white p-6 rounded-lg border border-pink-200 group cursor-pointer">
-                    <summary
-                        class="flex justify-between items-center font-bold text-gray-900 hover:text-pink-600 transition">
-                        <span class="flex items-center gap-3">
-                            <i class="fas fa-plus text-pink-600 group-open:hidden"></i>
-                            <i class="fas fa-minus text-pink-600 hidden group-open:block"></i>
-                            Bagaimana cara menyimpan produk?
-                        </span>
-                    </summary>
-                    <p class="text-gray-700 mt-4 ml-8">Simpan produk di tempat yang sejuk dan kering, jauh dari sinar
-                        matahari langsung. Hindari menyimpan di kamar mandi karena kelembaban tinggi dapat merusak
-                        produk. Gunakan dalam waktu 12 bulan setelah pembukaan untuk hasil optimal.</p>
-                </details>
+                @if($faqs->isNotEmpty())
+                    @foreach($faqs as $faq)
+                        <details class="bg-white p-6 rounded-lg border border-pink-200 group cursor-pointer">
+                            <summary class="flex justify-between items-center font-bold text-gray-900 hover:text-pink-600 transition">
+                                <span class="flex items-center gap-3">
+                                    <i class="fas fa-plus text-pink-600 group-open:hidden"></i>
+                                    <i class="fas fa-minus text-pink-600 hidden group-open:block"></i>
+                                    {{ $faq->pertanyaan }}
+                                </span>
+                            </summary>
+                            <p class="text-gray-700 mt-4 ml-8">{{ $faq->jawaban }}</p>
+                        </details>
+                    @endforeach
+                @else
+                    <div class="rounded-3xl border border-dashed border-pink-200 bg-white p-8 text-center text-gray-500">
+                        Belum ada FAQ untuk produk ini. Silakan cek kembali nanti atau hubungi layanan pelanggan.
+                    </div>
+                @endif
             </div>
         </div>
     </section>

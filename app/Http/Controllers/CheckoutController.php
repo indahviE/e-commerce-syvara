@@ -149,7 +149,17 @@ class CheckoutController extends Controller
         }
 
         // dd($request->all());
-        return redirect(route('history'));
+        return redirect()->route('order.receipt', ['order' => $order->id]);
+    }
+
+    public function receipt(Orders $order)
+    {
+        if (!Auth::check() || Auth::id() !== $order->user_id) {
+            abort(403);
+        }
+
+        $order->load(['orderDetails.product.categories', 'voucher', 'user']);
+        return view('order_receipt', ['order' => $order]);
     }
 
     public function updateStatus(Request $request, Orders $order)

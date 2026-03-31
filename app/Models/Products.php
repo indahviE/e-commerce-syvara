@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Wishlist;
+use App\Models\Category;
+use App\Models\User;
+use App\Models\faq_product;
+use App\Models\panduan_produk;
 use Illuminate\Support\Facades\Auth;
 
 class Products extends Model
@@ -46,9 +50,23 @@ class Products extends Model
         return $this->belongsToMany(Category::class, 'product_categories', 'product_id', 'category_id');
     }
 
+    public function faqs()
+    {
+        return $this->hasMany(faq_product::class, 'produk_id');
+    }
+
+    public function guides()
+    {
+        return $this->hasMany(panduan_produk::class, 'produk_id');
+    }
 
     public function getCategoryIdsAttribute()
     {
         return $this->categories->pluck('id')->toArray();
+    }
+
+    public function getCategoryNamesAttribute()
+    {
+        return $this->categories->pluck('category_name')->implode(', ');
     }
 }

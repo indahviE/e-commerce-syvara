@@ -3,63 +3,58 @@
 namespace App\Http\Controllers;
 
 use App\Models\faq_product;
+use App\Models\Products;
 use Illuminate\Http\Request;
 
 class FaqProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $faqs = faq_product::with('product')->latest()->paginate(20);
+        return view('admin.faqs.index', compact('faqs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $products = Products::all();
+        return view('admin.faqs.create', compact('products'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'produk_id' => 'required|exists:products,id',
+            'pertanyaan' => 'required|string|max:255',
+            'jawaban' => 'required|string|max:1000',
+        ]);
+
+        faq_product::create($request->only(['produk_id', 'pertanyaan', 'jawaban']));
+
+        return redirect()->route('admin.faqs.index')->with('success', 'FAQ produk berhasil disimpan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(faq_product $faq_product)
+    public function edit(faq_product $faq)
     {
-        //
+        $products = Products::all();
+        return view('admin.faqs.edit', compact('faq', 'products'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(faq_product $faq_product)
+    public function update(Request $request, faq_product $faq)
     {
-        //
+        $request->validate([
+            'produk_id' => 'required|exists:products,id',
+            'pertanyaan' => 'required|string|max:255',
+            'jawaban' => 'required|string|max:1000',
+        ]);
+
+        $faq->update($request->only(['produk_id', 'pertanyaan', 'jawaban']));
+
+        return redirect()->route('admin.faqs.index')->with('success', 'FAQ produk berhasil diperbarui.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, faq_product $faq_product)
+    public function destroy(faq_product $faq)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(faq_product $faq_product)
-    {
-        //
+        $faq->delete();
+        return redirect()->route('admin.faqs.index')->with('success', 'FAQ produk berhasil dihapus.');
     }
 }
