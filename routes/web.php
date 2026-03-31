@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\FaqProductController;
+use App\Http\Controllers\PanduanProdukController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
@@ -8,6 +10,7 @@ use App\Models\User;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -84,6 +87,30 @@ Route::middleware(['auth', 'admin'])->group(function () {
         CategoryController::class,
         'delete_category'
     ])->name('category_delete');
+
+    // FAQ CRUD
+    Route::get('/admin/faqs', [FaqProductController::class, 'index'])->name('admin.faqs.index');
+    Route::get('/admin/faqs/create', [FaqProductController::class, 'create'])->name('admin.faqs.create');
+    Route::post('/admin/faqs', [FaqProductController::class, 'store'])->name('admin.faqs.store');
+    Route::get('/admin/faqs/{faq}/edit', [FaqProductController::class, 'edit'])->name('admin.faqs.edit');
+    Route::patch('/admin/faqs/{faq}', [FaqProductController::class, 'update'])->name('admin.faqs.update');
+    Route::delete('/admin/faqs/{faq}', [FaqProductController::class, 'destroy'])->name('admin.faqs.destroy');
+
+    // Panduan CRUD
+    Route::get('/admin/guides', [PanduanProdukController::class, 'index'])->name('admin.guides.index');
+    Route::get('/admin/guides/create', [PanduanProdukController::class, 'create'])->name('admin.guides.create');
+    Route::post('/admin/guides', [PanduanProdukController::class, 'store'])->name('admin.guides.store');
+    Route::get('/admin/guides/{guide}/edit', [PanduanProdukController::class, 'edit'])->name('admin.guides.edit');
+    Route::patch('/admin/guides/{guide}', [PanduanProdukController::class, 'update'])->name('admin.guides.update');
+    Route::delete('/admin/guides/{guide}', [PanduanProdukController::class, 'destroy'])->name('admin.guides.destroy');
+
+    // Voucher CRUD
+    Route::get('/admin/vouchers', [VoucherController::class, 'index'])->name('admin.vouchers.index');
+    Route::get('/admin/vouchers/create', [VoucherController::class, 'create'])->name('admin.vouchers.create');
+    Route::post('/admin/vouchers', [VoucherController::class, 'store'])->name('admin.vouchers.store');
+    Route::get('/admin/vouchers/{voucher}/edit', [VoucherController::class, 'edit'])->name('admin.vouchers.edit');
+    Route::patch('/admin/vouchers/{voucher}', [VoucherController::class, 'update'])->name('admin.vouchers.update');
+    Route::delete('/admin/vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('admin.vouchers.destroy');
 });
 
 Route::middleware(['auth', 'member'])->group(function () {
@@ -162,6 +189,7 @@ Route::middleware('auth', 'member')->group(function () {
 Route::middleware('auth', 'member')->group(function () {
     Route::get('/history', [CartController::class, 'history'])->name('history');
     Route::patch('/history/{order}', [CartController::class, 'cancelOrder'])->name('cancelOrder');
+    Route::get('/orders/{order}/receipt', [CheckoutController::class, 'receipt'])->name('order.receipt');
 });
 
 Route::get("/product", function () {

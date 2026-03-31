@@ -44,12 +44,13 @@ class ProductController extends Controller
     }
     public function product_detail($id)
     {
-        $product = Products::with('categories')->findOrFail($id);
-        $categories = Category::all();
+        $product = Products::with(['categories', 'faqs', 'guides'])->findOrFail($id);
+        $categories = $product->categories;
 
-        $relatedProducts = Products::whereHas('categories', function ($q) use ($product) {
-                $q->whereIn('categories.id', $product->categories->pluck('id'));
-            })
+        $categoryIds = $product->categories->pluck('id')->toArray();
+        $relatedProducts = Products::when(count($categoryIds), fn($q) => $q->whereHas('categories', function ($q2) use ($categoryIds) {
+                $q2->whereIn('categories.id', $categoryIds);
+            }))
             ->where('id', '!=', $id)
             ->limit(5)
             ->get();
@@ -57,7 +58,9 @@ class ProductController extends Controller
         return view('productMain', [
             'product' => $product,
             'categories' => $categories,
-            'relatedProducts' => $relatedProducts
+            'relatedProducts' => $relatedProducts,
+            'faqs' => $product->faqs,
+            'guides' => $product->guides,
         ]);
     }
     public function view_create_product()

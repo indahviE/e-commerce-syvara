@@ -1,5 +1,5 @@
 <!-- Navbar Component -->
-<nav class="bg-white border-b border-pink-100 sticky top-0 z-50 shadow-sm">
+<nav class="no-print bg-white border-b border-pink-100 sticky top-0 z-50 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         <!-- Logo -->
         <a href="/" class="text-2xl font-bold text-pink-600 flex items-center gap-2">
@@ -71,10 +71,24 @@
 
                             <!-- Admin Menu (Hanya jika admin) -->
                             @if (auth()->user()->role === 'admin')
-                                <a href="/admin/dashboard"
-                                    class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-pink-50 transition border-t border-gray-100">
-                                    <i class="fas fa-tachometer-alt text-pink-600 w-5"></i>
-                                    <span class="font-medium text-sm">Admin Panel</span>
+                               
+
+                                <a href="{{ route('admin.faqs.index') }}"
+                                    class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-pink-50 transition">
+                                    <i class="fas fa-question-circle text-pink-600 w-5"></i>
+                                    <span class="font-medium text-sm">Kelola FAQ</span>
+                                </a>
+
+                                <a href="{{ route('admin.guides.index') }}"
+                                    class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-pink-50 transition">
+                                    <i class="fas fa-book text-pink-600 w-5"></i>
+                                    <span class="font-medium text-sm">Kelola Panduan</span>
+                                </a>
+
+                                <a href="{{ route('admin.vouchers.index') }}"
+                                    class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-pink-50 transition">
+                                    <i class="fas fa-ticket-alt text-pink-600 w-5"></i>
+                                    <span class="font-medium text-sm">Kelola Voucher</span>
                                 </a>
                             @else
                                 <!-- Member Menu (Hanya jika member) -->

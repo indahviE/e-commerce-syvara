@@ -213,6 +213,9 @@
                                     </svg>
                                     Detail
                                 </button>
+                                <a href="{{ route('order.receipt', $order->id) }}" target="_blank" class="btn-detail">
+                                    <i class="fas fa-receipt"></i> Struk
+                                </a>
                                 @if ($order->status_order == 'Diproses')
                                     <form action="{{ route('cancelOrder', $order->id) }}" method="post">
                                         @csrf
@@ -399,6 +402,9 @@
             <div class="d-total-row">
                 <span>Total Pembayaran</span>
                 <span>${fmt(o.total_price)}</span>
+            </div>
+            <div style="margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="/orders/${o.id}/receipt" target="_blank" style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.85rem 1.1rem; border-radius:999px; border:1px solid #FBCFE8; background:#fff; color:#BE185D; font-weight:700; text-decoration:none;">Lihat Struk</a>
             </div>
         </div>
     `;
