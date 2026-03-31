@@ -27,7 +27,7 @@ class CartController extends Controller
         }
 
         $cartDetails = CartDetail::where('cart_id', $cart->id)
-            ->with('product.category') // eager load relasi product
+            ->with('product.categories') // eager load relasi product
             ->get();
 
         // ambil product nya aja (fungsi map.js di laravl)
@@ -44,7 +44,7 @@ class CartController extends Controller
 
         $orders = Orders::where('user_id', Auth::id())
             ->with([
-                'orderDetails.product.category',
+                'orderDetails.product.categories', // eager load relasi product dan category di order details
                 'voucher'
             ])
             ->latest()

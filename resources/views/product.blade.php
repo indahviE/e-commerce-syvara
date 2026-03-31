@@ -462,10 +462,8 @@
             let chips = "";
             if(p.categories && p.categories.length > 0) {
                 chips = p.categories.map(c => `
-                    <span class="inline-block mb-1 text-xs font-bold text-pink-600 bg-pink-50 px-2.5 py-1 rounded-full border border-pink-200">
-                        ${c.category_name}
-                    </span>
-                `);
+                    <span class="inline-block mb-1 text-xs font-bold text-pink-600 bg-pink-50 px-2.5 py-1 rounded-full border border-pink-200">${c.category_name}</span>
+                `).join('');
             } 
 
             const wishBtn = isAuth ?
@@ -498,8 +496,7 @@
                     ${wishBtn}
                 </div>
                 <div class="p-4">
-                    <div class="mb-2">
-                       
+                    <div class="mb-2"> 
                         ${chips}
                     </div>
                     <h3 class="font-bold text-gray-900 text-sm line-clamp-2 mb-2 group-hover:text-pink-600 transition">

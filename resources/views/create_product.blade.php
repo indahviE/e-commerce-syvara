@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +9,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
-        * { font-family: 'Poppins', sans-serif; }
-        input:focus, select:focus, textarea:focus { outline: none; box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1); border-color: #ec4899; }
+
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+            border-color: #ec4899;
+        }
     </style>
 </head>
+
 <body class="bg-gray-50">
     <x-navbar></x-navbar>
 
@@ -20,7 +32,8 @@
         <div class="max-w-7xl mx-auto">
             <div class="bg-white rounded-2xl border border-pink-100 p-8 shadow-sm mb-6">
                 <div class="flex items-center gap-4 mb-4">
-                    <a href="/product" class="flex items-center gap-2 text-pink-600 hover:text-pink-700 transition font-semibold">
+                    <a href="/product"
+                        class="flex items-center gap-2 text-pink-600 hover:text-pink-700 transition font-semibold">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                 </div>
@@ -35,23 +48,39 @@
         <div class="max-w-2xl mx-auto">
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-pink-100">
                 <div class="p-8">
-                    <form action="{{ route('product_create') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    <form action="{{ route('product_create') }}" method="POST" enctype="multipart/form-data"
+                        class="space-y-6">
                         @csrf
 
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">
                                 <i class="fas fa-heading mr-2 text-pink-600"></i> Nama Produk
                             </label>
-                            <input type="text" name="name" placeholder="Contoh: Vitamin C Glow Serum" value="{{ old('name') }}"
+                            <input type="text" name="name" placeholder="Contoh: Vitamin C Glow Serum"
+                                value="{{ old('name') }}"
                                 class="w-full border-2 border-gray-200 rounded-lg px-4 py-3">
                             @error('name')
-                                <div class="mt-2 p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm flex items-center gap-2">
+                                <div
+                                    class="mt-2 p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm flex items-center gap-2">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
                         </div>
 
-                        <!-- Multiple Category Selection -->
+                        {{-- <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <i class="fas fa-list mr-2 text-pink-600"></i> Kategori
+                            </label>
+                            <select name="category_id" class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 bg-white">
+                                <option value="">-- Pilih Kategori --</option>
+                                @foreach ($categories as $cat)
+                                    <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
+                                        {{ $cat->category_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div> --}}
+
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-3">
                                 <i class="fas fa-list mr-2 text-pink-600"></i> Kategori (Pilih 1 atau lebih)
@@ -59,26 +88,20 @@
 
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-2">
                                 @foreach ($categories as $cat)
-                                    <label class="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-pink-300 hover:bg-pink-50 transition"
-                                        data-category="{{ $cat->id }}">
+                                    <label
+                                        class="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-pink-300 hover:bg-pink-50 transition">
                                         <input type="checkbox" name="category_ids[]" value="{{ $cat->id }}"
                                             {{ in_array($cat->id, old('category_ids', [])) ? 'checked' : '' }}
-                                            class="w-5 h-5 text-pink-600 rounded cursor-pointer category-checkbox">
-                                        <span class="flex-1 font-semibold text-gray-700">{{ $cat->category_name }}</span>
+                                            class="w-5 h-5  text-pink-600 rounded cursor-pointer category-checkbox accent-pink-600">
+                                        <span
+                                            class="flex-1 font-semibold text-gray-700">{{ $cat->category_name }}</span>
                                     </label>
                                 @endforeach
                             </div>
 
-                            <!-- Display selected categories -->
-                            <div id="selectedCategories" class="mt-3 p-3 bg-pink-50 border border-pink-200 rounded-lg hidden">
-                                <p class="text-sm font-semibold text-gray-700 mb-2">Kategori Terpilih:</p>
-                                <div id="selectedList" class="flex flex-wrap gap-2">
-                                    <!-- dinamis dengan JS -->
-                                </div>
-                            </div>
-
                             @error('category_ids')
-                                <div class="mt-2 p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm flex items-center gap-2">
+                                <div
+                                    class="mt-2 p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm flex items-center gap-2">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                 </div>
                             @enderror
@@ -92,7 +115,8 @@
                                 <input type="number" name="price" placeholder="0" value="{{ old('price') }}"
                                     class="w-full border-2 border-gray-200 rounded-lg px-4 py-3">
                                 @error('price')
-                                    <div class="mt-2 p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm flex items-center gap-2">
+                                    <div
+                                        class="mt-2 p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm flex items-center gap-2">
                                         <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                     </div>
                                 @enderror
@@ -105,7 +129,8 @@
                                 <input type="number" name="stock" placeholder="0" value="{{ old('stock') }}"
                                     class="w-full border-2 border-gray-200 rounded-lg px-4 py-3">
                                 @error('stock')
-                                    <div class="mt-2 p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm flex items-center gap-2">
+                                    <div
+                                        class="mt-2 p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm flex items-center gap-2">
                                         <i class="fas fa-exclamation-circle"></i> {{ $message }}
                                     </div>
                                 @enderror
@@ -129,10 +154,12 @@
                         </div>
 
                         <div class="flex gap-4 pt-4 border-t border-gray-200">
-                            <button type="reset" class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-bold hover:bg-gray-50 transition">
+                            <button type="reset"
+                                class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-bold hover:bg-gray-50 transition">
                                 <i class="fas fa-redo mr-2"></i> Reset
                             </button>
-                            <button type="submit" class="flex-1 px-6 py-3 bg-pink-600 text-white rounded-lg font-bold hover:bg-pink-700 transition">
+                            <button type="submit"
+                                class="flex-1 px-6 py-3 bg-pink-600 text-white rounded-lg font-bold hover:bg-pink-700 transition">
                                 <i class="fas fa-save mr-2"></i> Simpan Produk
                             </button>
                         </div>
@@ -143,41 +170,6 @@
     </section>
 
     <x-footer></x-footer>
-
-    <script>
-        // Update selected categories display
-        const checkboxes = document.querySelectorAll('.category-checkbox');
-        const selectedCategories = document.getElementById('selectedCategories');
-        const selectedList = document.getElementById('selectedList');
-
-        function updateSelectedCategories() {
-            const selected = Array.from(checkboxes)
-                .filter(cb => cb.checked)
-                .map(cb => {
-                    const label = cb.closest('label');
-                    return label.querySelector('span').textContent.trim();
-                });
-
-            if (selected.length > 0) {
-                selectedCategories.classList.remove('hidden');
-                selectedList.innerHTML = selected.map(cat =>
-                    `<span class="inline-flex items-center gap-1 px-3 py-1 bg-pink-600 text-white rounded-full text-sm font-semibold">
-                        ${cat}
-                        <i class="fas fa-check"></i>
-                    </span>`
-                ).join('');
-            } else {
-                selectedCategories.classList.add('hidden');
-            }
-        }
-
-        // Event listener untuk setiap checkbox
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateSelectedCategories);
-        });
-
-        // Initial render
-        updateSelectedCategories();
-    </script>
 </body>
+
 </html>
