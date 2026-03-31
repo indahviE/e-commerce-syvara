@@ -33,10 +33,10 @@
 <body class="bg-white">
     <x-navbar></x-navbar>
 
-    <!-- Hero Section -->
-    <section class="relative pt-8 pb-6 px-4">
+    <!-- Header Section -->
+    <section class="py-8 px-4 bg-gradient-to-r from-pink-50 to-pink-100">
         <div class="max-w-7xl mx-auto">
-            <div class="bg-pink-500 rounded-3xl p-8 sm:p-12 shadow-xl">
+            <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl p-8 shadow-lg">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                     <div>
                         <h1 class="text-4xl md:text-5xl font-bold text-white mb-3">Kategori Produk</h1>

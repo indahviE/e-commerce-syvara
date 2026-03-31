@@ -16,11 +16,13 @@ class ProductController extends Controller
         $categoryName = $request->category_name;
         $categoryId   = $request->id;
 
-        $products = Products::with('category')
+        $products = Products::with('categories')
             ->when($s, fn($q) => $q->where('name', 'like', "%$s%"))
-            ->when($categoryId,   fn($q) => $q->where('category_id', $categoryId))
+            ->when($categoryId, fn($q) => $q->whereHas('categories', fn($q2) =>
+                $q2->where('categories.id', $categoryId)
+            ))
             ->when($categoryName, fn($q) => $q->whereHas(
-                'category',
+                'categories',
                 fn($q2) =>
                 $q2->where('category_name', $categoryName)
             ))
@@ -28,6 +30,7 @@ class ProductController extends Controller
 
         $categories = Category::has('products')->get();
 
+        // dd($products);
         return view('product', [
             'categories' => $categories,
             'products'   => $products,
@@ -36,17 +39,21 @@ class ProductController extends Controller
     }
     public function viewAdminProduct()
     {
-        $products = Products::with('category')->get();
+        $products = Products::with('categories')->get();
         return view('productAdmin', ['products' => $products]);
     }
     public function product_detail($id)
     {
-        $product = Products::findOrFail($id);
+        $product = Products::with('categories')->findOrFail($id);
         $categories = Category::all();
-        $relatedProducts = Products::where('category_id', $product->category_id)
+
+        $relatedProducts = Products::whereHas('categories', function ($q) use ($product) {
+                $q->whereIn('categories.id', $product->categories->pluck('id'));
+            })
             ->where('id', '!=', $id)
             ->limit(5)
             ->get();
+
         return view('productMain', [
             'product' => $product,
             'categories' => $categories,
@@ -75,20 +82,23 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id',
+            'category_ids' => 'required|array|min:1',
+            'category_ids.*' => 'exists:categories,id',
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048'
         ], [
             'price.numeric' => 'Harga harus berupa angka!',
             'price.min' => 'Harga tidak boleh negatif!',
             'stock.integer' => 'Stock harus berupa angka!',
             'stock.min' => 'Stock tidak boleh negatif!',
-            'category_id.exists' => 'Kategori tidak ditemukan!',
+            'category_ids.required' => 'Pilih minimal satu kategori!',
+            'category_ids.array' => 'Format kategori tidak valid!',
+            'category_ids.*.exists' => 'Kategori tidak ditemukan!',
             'image.mimes' => 'Format foto tidak mendukung!',
             'image.max' => 'Ukuran gambar maksimal 2mb!'
         ]);
 
         $exists = Products::where('name', $request->name)
-            ->where('category_id', $request->category_id)
+            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $request->category_ids))
             ->exists();
 
         if ($exists) {
@@ -100,57 +110,73 @@ class ProductController extends Controller
         } else {
             $image = null;
         }
-        Products::create([
+
+        $product = Products::create([
             'name' => $request->name,
-            'category_id' => $request->category_id,
+            'category_id' => $request->category_ids[0],
             'price' => $request->price,
             'stock' => $request->stock,
             'description' => $request->description,
             'image' => $image,
         ]);
-        return redirect('/admin/product')->with('success', 'Produk berhasil ditambahkan!');
+
+        $product->categories()->sync($request->category_ids);
+
+        return redirect('/product')->with('success', 'Produk berhasil ditambahkan!');
     }
 
     public function update_product(Request $request, $id)
     {
-        $product = Products::find($id);
+        $product = Products::findOrFail($id);
 
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
             'stock' => 'required|integer',
             'description' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id',
+            'category_ids' => 'required|array|min:1',
+            'category_ids.*' => 'exists:categories,id',
             'gambar' => 'nullable|image|mimes:jpeg,jpg,png|max:2048'
         ], [
             'price.numeric' => 'Harga harus berupa angka!',
             'price.min' => 'Harga tidak boleh negatif!',
             'stock.integer' => 'Stock harus berupa angka!',
             'stock.min' => 'Stock tidak boleh negatif!',
-            'category_id.exists' => 'Kategori tidak ditemukan!',
+            'category_ids.required' => 'Pilih minimal satu kategori!',
+            'category_ids.array' => 'Format kategori tidak valid!',
+            'category_ids.*.exists' => 'Kategori tidak ditemukan!',
             'gambar.mimes' => 'Format foto tidak mendukung!',
             'gambar.max' => 'Ukuran gambar maksimal 2mb!'
         ]);
 
         $exists = Products::where('name', $request->name)
-            ->where('category_id', $request->category_id)
+            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $request->category_ids))
             ->where('id', '!=', $product->id)
             ->exists();
 
         if ($exists) {
             return back()->withErrors(['name' => 'Produk dengan nama kategori ini sudah ada!']);
         }
+
         if ($request->hasFile('gambar')) {
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
-            $request['image'] = $request->gambar->store('images', 'public');
+            $image = $request->gambar->store('images', 'public');
         } else {
-            $request['image'] = $product->image;
+            $image = $product->image;
         }
 
-        // dd($request->all());
-        $product->update($request->all());
+        $product->update([
+            'name' => $request->name,
+            'category_id' => $request->category_ids[0],
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'description' => $request->description,
+            'image' => $image,
+        ]);
+
+        $product->categories()->sync($request->category_ids);
 
         return redirect()->route('ProductAdmin')->with('success', 'Produk telah ter-update');
     }

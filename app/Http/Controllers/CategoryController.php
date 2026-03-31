@@ -27,13 +27,13 @@ class CategoryController extends Controller
     }
     public function show_products($id)
     {
-    $category = Category::findOrFail($id);
-    $product = Products::where('category_id', $id)->get();
+        $category = Category::findOrFail($id);
+        $product = Products::whereHas('categories', fn($q) => $q->where('categories.id', $id))->get();
 
-    return view('category-products', [
-        'category' => $category,
-        'products' => $product
-    ]);
+        return view('category-products', [
+            'category' => $category,
+            'products' => $product
+        ]);
     }
     public function create_category(Request $request){
             $request->validate([

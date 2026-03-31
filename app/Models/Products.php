@@ -16,7 +16,8 @@ class Products extends Model
         'price',
         'stock',
         'description',
-        'image'
+        'image',
+        'category_id'
     ];
 
     // ====== RELATIONSHIPS ======
