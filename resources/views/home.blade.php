@@ -16,7 +16,7 @@
     <x-navbar></x-navbar>
 
     <section class="py-4 px-4 border-b border-pink-100">
-        <div class="max-w-7xl min-h-[80vh] bg-cover bg-center mx-auto bg-[url('{{asset('storage/images/bg2.jpeg')}}')]">
+        <div class="max-w-7xl min-h-[80vh] bg-cover bg-center mx-auto bg-[url('{{asset('images/Landing page.png')}}')]">
             <div class="grid h-[78vh] grid-cols-1 md:grid-cols-2 gap-12 items-end ">
                 <div class="ms-[11%] pe-[2%] space-y-2 ">
                     <span class="text-pink-600 text-sm font-semibold">Premium Skincare</span>
