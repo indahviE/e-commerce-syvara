@@ -49,8 +49,8 @@
 <body class="bg-pink-50">
     <x-navbar />
 
-    <section class="py-12 px-4">
-        <div class="receipt-card bg-white rounded-[32px] border border-pink-100 shadow-xl overflow-hidden">
+    <section class="py-12 px-4" >
+        <div  id="receiptContent" class="receipt-card bg-white rounded-[32px] border border-pink-100 shadow-xl overflow-hidden">
             <div class="bg-gradient-to-r from-pink-500 to-rose-500 px-8 py-8 text-white">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
@@ -65,7 +65,7 @@
                 </div>
             </div>
 
-            <div id="receiptContent" class="p-8">
+            <div  class="p-8">
                 <div class="grid gap-6 md:grid-cols-3 mb-8">
                     <div class="rounded-3xl border border-pink-100 bg-pink-50 p-6">
                         <p class="text-sm text-pink-600 font-semibold">Status</p>

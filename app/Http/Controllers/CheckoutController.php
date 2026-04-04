@@ -117,7 +117,7 @@ class CheckoutController extends Controller
             $request["voucher_id"] = null;
         }
 
-        $request["payment_method"] = $request['payment'];
+        $request["payment_method"] = $request['payment_method2'];
         // dd($request->all());
         $order = Orders::create($request->all());
 

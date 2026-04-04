@@ -8,7 +8,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('storage/css/payment.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-     <style>
+    <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
         * {
@@ -145,12 +145,13 @@
                             <div class="field-group">
                                 <div>
                                     <label class="field-label">Nama Penerima</label>
-                                    <input type="text" value="{{ Auth::user()->name }}" name="nama_penerima" class="field-input"
-                                        id="f-nama" placeholder="Nama lengkap penerima" required>
+                                    <input type="text" value="{{ Auth::user()->name }}" name="nama_penerima"
+                                        class="field-input" id="f-nama" placeholder="Nama lengkap penerima" required>
                                 </div>
                                 <div>
                                     <label class="field-label">Nomor Telepon</label>
-                                    <input type="tel" class="field-input" id="f-telp" name="no_telp" placeholder="08xxxxxxxxxx" required>
+                                    <input type="tel" class="field-input" id="f-telp" name="no_telp"
+                                        placeholder="08xxxxxxxxxx" required>
                                 </div>
                                 <div class="field-row">
                                     <div>
@@ -178,19 +179,19 @@
                                 <div class="field-row">
                                     <div>
                                         <label class="field-label">Kecamatan</label>
-                                        <input type="text" class="field-input" id="f-kec"
-                                            placeholder="Kecamatan" name="kecamatan" required>
+                                        <input type="text" class="field-input" id="f-kec" placeholder="Kecamatan"
+                                            name="kecamatan" required>
                                     </div>
                                     <div>
                                         <label class="field-label">Kode Pos</label>
-                                        <input type="text" class="field-input" name="kode_pos" id="f-kodepos" required placeholder="12345"
-                                            maxlength="5">
+                                        <input type="text" class="field-input" name="kode_pos" id="f-kodepos"
+                                            required placeholder="12345" maxlength="5">
                                     </div>
                                 </div>
                                 <div>
                                     <label class="field-label">Alamat Lengkap</label>
-                                    <textarea class="field-input" name="alamat" required id="f-alamat" rows="3" placeholder="Jl. Nama Jalan No. xx, RT/RW, Kelurahan..."
-                                        style="resize:vertical; line-height:1.5;"> </textarea>
+                                    <textarea class="field-input" name="alamat" required id="f-alamat" rows="3"
+                                        placeholder="Jl. Nama Jalan No. xx, RT/RW, Kelurahan..." style="resize:vertical; line-height:1.5;"> </textarea>
                                 </div>
                                 <div>
                                     <label class="field-label">Catatan untuk Kurir <span
@@ -212,8 +213,8 @@
                                 Metode Pembayaran
                             </p>
                             <div class="payment-options">
-
-                                <label class="payment-option selected" onclick="selectPayment(this, 'qris')">
+                                <input type="text" id="payment_checkout" name="payment_method2" hidden value="Qris">
+                                <label id="qris_select" class="payment-option selected" onclick="gantiPayment(this, 'Qris')">
                                     <input type="radio" name="payment_method" value="qris" checked>
                                     <div class="payment-icon-box" style="background:#FFF3E0; color:#E65100;">QRIS</div>
                                     <div>
@@ -222,7 +223,7 @@
                                     </div>
                                 </label>
 
-                                <label class="payment-option" onclick="selectPayment(this, 'transfer')">
+                                <label class="payment-option" onclick="gantiPayment(this, 'Transfer')">
                                     <input type="radio" name="payment_method" value="transfer">
                                     <div class="payment-icon-box" style="background:#E3F2FD; color:#0D47A1;">TF</div>
                                     <div>
@@ -231,7 +232,7 @@
                                     </div>
                                 </label>
 
-                                <label class="payment-option" onclick="selectPayment(this, 'va')">
+                                <label class="payment-option" onclick="gantiPayment(this, 'Virtual Account')">
                                     <input type="radio" name="payment_method" value="va">
                                     <div class="payment-icon-box" style="background:#E8F5E9; color:#1B5E20;">VA</div>
                                     <div>
@@ -240,7 +241,7 @@
                                     </div>
                                 </label>
 
-                                <label class="payment-option" onclick="selectPayment(this, 'cod')">
+                                <label class="payment-option" onclick="gantiPayment(this, 'COD')">
                                     <input type="radio" name="payment_method" value="cod">
                                     <div class="payment-icon-box" style="background:#FCE4EC; color:#880E4F;">COD</div>
                                     <div>
@@ -249,7 +250,7 @@
                                     </div>
                                 </label>
 
-                                <label class="payment-option" onclick="selectPayment(this, 'ewallet')">
+                                <label class="payment-option" onclick="gantiPayment(this, 'E-Wallet')">
                                     <input type="radio" name="payment_method" value="ewallet">
                                     <div class="payment-icon-box" style="background:#F3E5F5; color:#4A148C;">EW</div>
                                     <div>
@@ -258,7 +259,7 @@
                                     </div>
                                 </label>
 
-                                <label class="payment-option" onclick="selectPayment(this, 'paylater')">
+                                <label class="payment-option" onclick="gantiPayment(this, 'Paylater')">
                                     <input type="radio" name="payment_method" value="paylater">
                                     <div class="payment-icon-box" style="background:#FFF8E1; color:#F57F17;">PL</div>
                                     <div>
@@ -274,7 +275,8 @@
                     </div>
                     <!-- KODE PROMO -->
                     <div class="promo-input-group mt-16">
-                        <input type="text" name="voucher" class="promo-input" placeholder="Kode promo / voucher" id="promoCode">
+                        <input type="text" name="voucher" class="promo-input" placeholder="Kode promo / voucher"
+                            id="promoCode">
                         <button type="button" class="btn-promo"
                             onclick="checkPromo('{{ route('check_promo') }}')">Pakai</button>
                     </div>
@@ -371,7 +373,8 @@
                         </div>
                         <div class="item-info">
                             {{-- <a href="/product/{{ $data->id }}/detail"> --}}
-                            <span class="item-badge">{{ $data->categories->pluck('category_name')->join(', ') }}</span>
+                            <span
+                                class="item-badge">{{ $data->categories->pluck('category_name')->join(', ') }}</span>
                             <div class="item-name">{{ $data->name }}</div>
                             <div class="item-stock">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -701,7 +704,7 @@
         </div>
     </form>
 
-     <x-footer/>
+    <x-footer />
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="{{ asset('storage/js/payment.js') }}"></script>
@@ -711,10 +714,22 @@
             // shipping-option-default
             updateSummary();
         });
+
+        function gantiPayment(el, pay) {
+            document.querySelectorAll('.payment-option').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            // tambah selected ke yang diklik
+            el.classList.add('selected');
+
+            const input = document.getElementById("payment_checkout");
+            if (input) input.value = pay;
+        }
+
+        // gantiPayment(document.getElementById("qris_select"), "Qris");
     </script>
     <script src="{{ asset('storage/js/functionBackend.js') }}"></script>
-    {{-- <script src="{{ asset('storage/js/payment.js') }}"></script> --}}
-    {{-- <script src="{{ asset('storage/js/functionBackend.js') }}"></script> --}}
 
     {{-- @endpush --}}
 </body>

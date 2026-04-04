@@ -55,10 +55,10 @@ class Products extends Model
         return $this->hasMany(faq_product::class, 'produk_id');
     }
 
-    public function discount()
-    {
-        return $this->hasOne(Discount::class);
-    }
+    // public function discount()
+    // {
+    //     return $this->hasOne(Discount::class);
+    // }
 
     public function guides()
     {

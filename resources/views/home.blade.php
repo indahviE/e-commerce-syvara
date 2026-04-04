@@ -15,36 +15,36 @@
 <body class="bg-white">
     <x-navbar></x-navbar>
 
-    <section class="py-12 px-4 border-b border-pink-100">
-        <div class="max-w-6xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6">
+    <section class="py-4 px-4 border-b border-pink-100">
+        <div class="max-w-7xl min-h-[80vh] bg-cover bg-center mx-auto bg-[url('{{asset('storage/images/bg2.jpeg')}}')]">
+            <div class="grid h-[78vh] grid-cols-1 md:grid-cols-2 gap-12 items-end ">
+                <div class="ms-[11%] pe-[2%] space-y-2 ">
                     <span class="text-pink-600 text-sm font-semibold">Premium Skincare</span>
-                    <h1 class="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
+                    {{-- <h1 class="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
                         Kulit Cerah & Sehat
                     </h1>
                     <p class="text-xl text-gray-700 leading-relaxed">
                         Produk skincare alami dengan bahan pilihan terbaik untuk kulit yang lebih cerah, sehat, dan bercahaya setiap hari.
-                    </p>
+                    </p> --}}
                     @auth
-                    <div class="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-4">
+                    <div class="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-1">
                         <p class="text-gray-900 font-semibold">Halo, <span class="text-pink-600">{{ auth()->user()->name }}</span>!</p>
                         <p class="text-gray-700 text-sm">Selamat datang kembali di Svayra</p>
                     </div>
                     @endauth
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
                         <a href="/product" class="px-8 py-4 bg-pink-500 text-white rounded-lg font-bold hover:bg-pink-600 transition text-center">
-                            <i class="fas fa-shopping-bag mr-2"></i> Lihat Produk
+                            <i class="fas fa-shopping-bag mr-2"></i> Lihat Semua Produk
                         </a>
                         <a href="/about" class="px-8 py-4 border-2 border-pink-500 text-pink-500 rounded-lg font-bold hover:border-pink-600 hover:text-pink-600 transition text-center">
-                            Pelajari Lebih
+                            Pelajari Lebih Lanjut
                         </a>
                     </div>
                 </div>
                 <div class="hidden md:block">
-                    <div class="rounded-3xl h-96 flex items-center justify-center border-2 border-pink-200 overflow-hidden">
+                    {{-- <div class="rounded-3xl h-96 flex items-center justify-center border-2 border-pink-200 overflow-hidden">
                         <img src="https://plus.unsplash.com/premium_photo-1683120952553-af3ec9cd60c0?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="GlowSkin Product" class="w-full h-full object-cover">
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

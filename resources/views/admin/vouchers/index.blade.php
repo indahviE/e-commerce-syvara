@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-pink-50 min-h-screen">
+<body class="bg-gray-50 min-h-screen">
     <x-navbar />
     <section class="py-10 px-4">
         <div class="max-w-6xl mx-auto">

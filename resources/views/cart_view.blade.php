@@ -274,19 +274,19 @@
 
                 <div class="summary-body">
                     <!-- KODE PROMO -->
-                    <div class="promo-input-group">
+                    {{-- <div class="promo-input-group">
                         <input type="text" class="promo-input" placeholder="Kode promo / voucher" id="promoCode">
                         <button class="btn-promo" onclick="applyPromo()">Pakai</button>
-                    </div>
+                    </div> --}}
 
                     <!-- RINCIAN -->
                     <div class="summary-row">
                         <span>Subtotal (<span id="item-count">4</span> item)</span>
                         <span id="summary-subtotal">Rp 1.633.731</span>
                     </div>
-                    <div class="summary-row discount" id="discount-row" style="display:none;">
-                        <span>🏷 Diskon Promo</span>
-                        <span id="discount-amount">−Rp 0</span>
+                    <div class="summary-row discount" id="discount-row" >
+                        <span>Diskon Promo</span>
+                        <span id="discount-amount">Masukan Saat Checkout</span>
                     </div>
                     <div class="summary-row shipping">
                         <span>Ongkos Kirim</span>
