@@ -71,8 +71,6 @@
 
                             <!-- Admin Menu (Hanya jika admin) -->
                             @if (auth()->user()->role === 'admin')
-                               
-
                                 <a href="{{ route('admin.faqs.index') }}"
                                     class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-pink-50 transition">
                                     <i class="fas fa-question-circle text-pink-600 w-5"></i>
