@@ -55,6 +55,11 @@ class Products extends Model
         return $this->hasMany(faq_product::class, 'produk_id');
     }
 
+    public function discount()
+    {
+        return $this->hasOne(Discount::class);
+    }
+
     public function guides()
     {
         return $this->hasMany(panduan_produk::class, 'produk_id');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produk - GlowSkin</title>
+    <title>Produk - Syvara</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -18,7 +18,7 @@
     <x-navbar></x-navbar>
 
     <!-- Alert Success -->
-    <div class="max-w-7xl mx-auto px-4 py-3">
+    <div class="max-w-7xl mx-auto px-2 py-2">
         @if (session('success'))
         <div class="flex items-start gap-4 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg alert-box">
             <i class="fas fa-check-circle text-green-600 text-xl flex-shrink-0 mt-0.5"></i>
@@ -39,10 +39,12 @@
                 </a>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-sm">
+                <table class="w-full text-sm border-separate border-spacing-y-2">
                     <thead>
-                        <tr class="border-b">
+                        <tr class="bg-white shadow-sm rounded-lg hover:bg-gray-50 transition">
+                            <th class="text-left py-2 font-semibold text-gray-700">No</th>
                             <th class="text-left py-2 font-semibold text-gray-700">Produk</th>
+                            <th class="text-left py-2 font-semibold text-gray-700">Kategori</th>
                             <th class="text-left py-2 font-semibold text-gray-700">Gambar</th>
                             <th class="text-left py-2 font-semibold text-gray-700">Deskripsi</th>
                             <th class="text-left py-2 font-semibold text-gray-700">Harga</th>
@@ -53,14 +55,28 @@
                     <tbody>
                         @foreach ($products as $data)
                         <tr class="border-b hover:bg-gray-50">
-                            <td class="py-3 text-gray-900 font-medium">{{ $data->name }}</td>
-                            <td class="py-3">
+                            <td class="py-4 px-3 text-gray-900 font-medium">
+                                {{ $loop->iteration }}</td>
+                            <td class="py-4 px-3 text-gray-900 font-medium">
+                                {{ $data->name }}</td>
+                            <td class="py-4 text-gray-900 font-medium">
+                                @foreach ($data->categories->take(3) as $category)
+                                    <span class="inline-block bg-pink-100 text-pink-600 text-xs px-2 py-1 rounded-full mr-1 mb-1">
+                                        {{ $category->category_name }}
+                                    </span>
+                                @endforeach
+
+                                @if ($data->categories->count() > 3)
+                                    <span class="text-gray-500 text-xs">...</span>
+                                @endif
+                            </td>
+                            <td class="py-4 px-3">
                                 <img src="{{ asset('storage/' . $data->image) }}" alt="{{ $data->name }}" class="w-16 h-16 object-cover">
                             </td>
-                            <td class="py-3 text-gray-700 text-sm max-w-xs">
+                            <td class="py-4 px-3 text-gray-700 text-sm max-w-xs">
                                 {{ Str::limit($data->description, 30, '...') }}
                             </td>
-                            <td class="py-3 text-pink-600 font-semibold">Rp {{ number_format($data->price, 0, ',', '.') }}</td>
+                            <td class="py-4 px-3 text-pink-600 font-semibold">Rp {{ number_format($data->price, 0, ',', '.') }}</td>
                             <td class="py-3 text-gray-700">{{ $data->stock }}</td>
                             <td class="py-3 text-center">
                                 <div class="flex gap-2 justify-center">
@@ -91,6 +107,9 @@
             </a>
         </div>
         @endif
+        <div class="mt-6">
+        {{ $products->links() }}
+    </div>
     </section>
 
     <x-footer></x-footer>

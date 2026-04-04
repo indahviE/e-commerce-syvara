@@ -33,8 +33,7 @@
                     </div>
                     @endauth
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                        <a href="/product" class="px-8 py-4 bg-psuuu
-                        nk-500 text-white rounded-lg font-bold hover:bg-pink-600 transition text-center">
+                        <a href="/product" class="px-8 py-4 bg-pink-500 text-white rounded-lg font-bold hover:bg-pink-600 transition text-center">
                             <i class="fas fa-shopping-bag mr-2"></i> Lihat Produk
                         </a>
                         <a href="/about" class="px-8 py-4 border-2 border-pink-500 text-pink-500 rounded-lg font-bold hover:border-pink-600 hover:text-pink-600 transition text-center">

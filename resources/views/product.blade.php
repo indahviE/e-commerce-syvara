@@ -87,6 +87,20 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        /* Sticky Footer CSS */
+        html {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        section {
+            flex: 1;
+        }
     </style>
 </head>
 
@@ -184,7 +198,7 @@
                                         @if ($data->created_at->diffInHours(now()) < 3)
                                             <span
                                                 class="badge-new bg-gradient-to-r from-pink-500 to-rose-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                                                ✨ NEW
+                                                NEW
                                             </span>
                                         @endif
 
@@ -437,106 +451,135 @@
 
 
         // Fungsi render card — sesuaikan HTML card kamu di sini
-        function renderCard(p) {
-            const imgHtml = p.image ?
-                `<img src="/storage/${p.image}" alt="${p.name}" class="w-full h-full object-cover">` :
-                `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 to-rose-100">
+function renderCard(p) {
+    const imgHtml = p.image
+        ? `<img src="/storage/${p.image}" alt="${p.name}" class="w-full h-full object-cover">`
+        : `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 to-rose-100">
                <i class="fas fa-image text-4xl text-pink-300"></i>
            </div>`;
 
-            const isNew = new Date(p.created_at) > new Date(Date.now() - 3 * 60 * 60 * 1000);
-            const isLow = p.stock < 5 && p.stock > 0;
-            const isHabis = p.stock === 0;
-            const isAuth = {{ auth()->check() ? 'true' : 'false' }};
-            const isWish = p.is_wishlisted ?? false;
+    const isNew = new Date(p.created_at) > new Date(Date.now() - 3 * 60 * 60 * 1000);
+    const isLow = p.stock < 5 && p.stock > 0;
+    const isHabis = p.stock === 0;
+    const isAuth = {{ auth()->check() ? 'true' : 'false' }};
+    const isWish = p.is_wishlisted ?? false;
 
-            const badgeNew = isNew ?
-                `<span class="badge-new bg-gradient-to-r from-pink-500 to-rose-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">✨ NEW</span>` :
-                '';
-            const badgeStock = isHabis ?
-                `<span class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">Habis</span>` :
-                isLow ?
-                `<span class="stock-low bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">Terbatas</span>` :
-                '';
+    const badgeNew = isNew
+        ? `<span class="badge-new bg-gradient-to-r from-pink-500 to-rose-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">NEW</span>`
+        : '';
 
-            let chips = "";
-            if(p.categories && p.categories.length > 0) {
-                chips = p.categories.map(c => `
-                    <span class="inline-block mb-1 text-xs font-bold text-pink-600 bg-pink-50 px-2.5 py-1 rounded-full border border-pink-200">${c.category_name}</span>
-                `).join('');
-            }
+    const badgeStock = isHabis
+        ? `<span class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">Habis</span>`
+        : isLow
+        ? `<span class="stock-low bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">Terbatas</span>`
+        : '';
 
-            const wishBtn = isAuth ?
-                `<button class="wishlist-btn heart-btn absolute top-3 right-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-pink-50 transition z-10"
+    // ✅ CATEGORY LIMIT + ...
+    let chips = "";
+    if (p.categories && p.categories.length > 0) {
+        const maxShow = 2;
+        const visible = p.categories.slice(0, maxShow);
+
+        chips = visible.map(c => `
+            <span class="inline-block text-xs font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
+                ${c.category_name}
+            </span>
+        `).join('');
+
+        if (p.categories.length > maxShow) {
+            chips += `<span class="text-xs text-gray-400 font-semibold">...</span>`;
+        }
+    }
+
+    const wishBtn = isAuth
+        ? `<button class="wishlist-btn heart-btn absolute top-3 right-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-pink-50 transition z-10"
                    data-product-id="${p.id}"
                    onclick="event.preventDefault(); event.stopPropagation();"
                    title="Tambah ke favorit">
                <i class="fas fa-heart ${isWish ? 'text-pink-600' : 'far text-gray-400'} text-lg"></i>
-           </button>` :
-                `<a href="/login" onclick="event.stopPropagation();"
+           </button>`
+        : `<a href="/login" onclick="event.stopPropagation();"
               class="absolute top-3 right-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-pink-50 transition z-10"
               title="Login untuk favorit">
                <i class="far fa-heart text-gray-400 text-lg"></i>
            </a>`;
 
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-            const checkoutRoute = "{{ route('show_single_payment') }}";
-            const cartRoute = "{{ route('cart_product_add') }}";
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const checkoutRoute = "{{ route('show_single_payment') }}";
+    const cartRoute = "{{ route('cart_product_add') }}";
 
-            return `
-            <div class="product-card group bg-white rounded-2xl overflow-hidden border border-pink-100 hover:border-pink-300 block">
-            <a href="/product/${p.id}/detail">
-                <div class="product-img relative h-48 sm:h-56 overflow-hidden">
-                    ${imgHtml}
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                    <div class="absolute top-3 left-3 right-3 flex justify-between items-start">
-                        ${badgeNew}
-                        ${badgeStock}
-                    </div>
-                    ${wishBtn}
-                </div>
-                <div class="p-4">
-                    <div class="mb-2">
-                        ${chips}
-                    </div>
-                    <h3 class="font-bold text-gray-900 text-sm line-clamp-2 mb-2 group-hover:text-pink-600 transition">
-                        ${p.name}
-                    </h3>
-                    <p class="gradient-text font-bold text-lg mb-3">
-                        Rp ${parseInt(p.price).toLocaleString('id-ID')}
-                    </p>
-                </div>
-            </a>
+    return `
+    <div class="product-card group bg-white rounded-2xl overflow-hidden border border-pink-100 hover:border-pink-300 flex flex-col h-full">
 
-            <div class="px-4 pb-4">
-                <div class="flex items-center justify-between text-xs text-gray-600 mb-3">
-                    <span class="flex items-center gap-1">
-                        <i class="fas fa-box text-pink-500"></i>
-                        Stok: <strong class="text-gray-900">${p.stock}</strong>
-                    </span>
-                    <span class="text-pink-500 font-semibold group-hover:text-pink-600 opacity-0 group-hover:opacity-100 transition">→</span>
+        <!-- IMAGE -->
+        <a href="/product/${p.id}/detail">
+            <div class="product-img relative h-48 sm:h-56 overflow-hidden">
+                ${imgHtml}
+
+                <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
+
+                <div class="absolute top-3 left-3 right-3 flex justify-between items-start">
+                    ${badgeNew}
+                    ${badgeStock}
                 </div>
 
-                <form action="${checkoutRoute}" method="post" class="flex gap-2">
-                    <input type="hidden" name="_token" value="${csrfToken}">
-                    <input type="hidden" name="produk_id" value="${p.id}">
-                    <select name="qty">
-                        ${Array.from({length: 11}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
-                    </select>
-                    <button type="submit"
-                        class="from-pink-50 to-rose-50 text-pink-600 rounded-xl font-semibold hover:from-pink-100 hover:to-rose-100 transition duration-300 text-center text-sm border border-pink-200 w-full">
-                        Checkout
-                    </button>
-                    <button type="button"
-                        onclick="addToCart('${cartRoute}', '${p.id}')"
-                        class="w-fit px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold text-center hover:shadow-lg transition duration-300 text-sm">
-                        <i class="fas fa-shopping-bag mr-1"></i>
-                    </button>
-                </form>
+                ${wishBtn}
             </div>
+        </a>
+
+        <!-- CONTENT -->
+        <div class="p-4 flex flex-col flex-grow">
+
+            <!-- CATEGORY -->
+            <div class="mb-2 flex flex-wrap gap-1 min-h-[30px]">
+                ${chips}
+            </div>
+
+            <!-- NAME -->
+            <h3 class="font-bold text-gray-900 text-sm line-clamp-2 min-h-[40px] mb-2 group-hover:text-pink-600 transition">
+                ${p.name}
+            </h3>
+
+            <!-- PRICE -->
+            <p class="gradient-text font-bold text-lg mb-3">
+                Rp ${parseInt(p.price).toLocaleString('id-ID')}
+            </p>
+
+            <!-- STOCK -->
+            <div class="flex items-center justify-between text-xs text-gray-600 mb-3">
+                <span class="flex items-center gap-1">
+                    <i class="fas fa-box text-pink-500"></i>
+                    Stok: <strong class="text-gray-900">${p.stock}</strong>
+                </span>
+                <span class="text-pink-500 font-semibold opacity-0 group-hover:opacity-100 transition">→</span>
+            </div>
+
+            <!-- BUTTON (SELALU DI BAWAH) -->
+            <form action="${checkoutRoute}" method="post" class="flex gap-2 mt-auto">
+                <input type="hidden" name="_token" value="${csrfToken}">
+                <input type="hidden" name="produk_id" value="${p.id}">
+
+                <select name="qty" class="text-sm border rounded px-1">
+                    ${Array.from({length: 11}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
+                </select>
+
+                <button type="submit"
+                    class="from-pink-50 to-rose-50 text-pink-600 rounded-xl font-semibold hover:from-pink-100 hover:to-rose-100 transition duration-300 text-center text-sm border border-pink-200 w-full">
+                    Checkout
+                </button>
+
+                <button type="button"
+                    onclick="addToCart('${cartRoute}', '${p.id}')"
+                    class="w-fit px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold text-center hover:shadow-lg transition duration-300 text-sm">
+                    <i class="fas fa-shopping-bag mr-1"></i>
+                </button>
+            </form>
+
         </div>
-        `;
-                            }
+    </div>
+    `;
+}
+
 
                             function changePage(dir) {
                                 const next = current + dir;

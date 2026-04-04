@@ -575,7 +575,7 @@
                     <div class="payment-options">
 
                         <label class="payment-option selected" onclick="selectPayment(this, 'qris')">
-                            <input type="radio" name="payment" value="qris" checked>
+                            <input type="radio" name="payment_method" value="qris" checked>
                             <div class="payment-icon-box" style="background:#FFF3E0; color:#E65100;">QRIS</div>
                             <div>
                                 <div class="payment-option-label">QRIS</div>
@@ -584,7 +584,7 @@
                         </label>
 
                         <label class="payment-option" onclick="selectPayment(this, 'transfer')">
-                            <input type="radio" name="payment" value="transfer">
+                            <input type="radio" name="payment_method" value="transfer">
                             <div class="payment-icon-box" style="background:#E3F2FD; color:#0D47A1;">TF</div>
                             <div>
                                 <div class="payment-option-label">Transfer Bank</div>
@@ -593,7 +593,7 @@
                         </label>
 
                         <label class="payment-option" onclick="selectPayment(this, 'va')">
-                            <input type="radio" name="payment" value="va">
+                            <input type="radio" name="payment_method" value="va">
                             <div class="payment-icon-box" style="background:#E8F5E9; color:#1B5E20;">VA</div>
                             <div>
                                 <div class="payment-option-label">Virtual Account</div>
@@ -602,7 +602,7 @@
                         </label>
 
                         <label class="payment-option" onclick="selectPayment(this, 'cod')">
-                            <input type="radio" name="payment" value="cod">
+                            <input type="radio" name="payment_method" value="cod">
                             <div class="payment-icon-box" style="background:#FCE4EC; color:#880E4F;">COD</div>
                             <div>
                                 <div class="payment-option-label">Bayar di Tempat</div>
@@ -611,7 +611,7 @@
                         </label>
 
                         <label class="payment-option" onclick="selectPayment(this, 'ewallet')">
-                            <input type="radio" name="payment" value="ewallet">
+                            <input type="radio" name="payment_method" value="ewallet">
                             <div class="payment-icon-box" style="background:#F3E5F5; color:#4A148C;">EW</div>
                             <div>
                                 <div class="payment-option-label">E-Wallet</div>
@@ -620,7 +620,7 @@
                         </label>
 
                         <label class="payment-option" onclick="selectPayment(this, 'paylater')">
-                            <input type="radio" name="payment" value="paylater">
+                            <input type="radio" name="payment_method" value="paylater">
                             <div class="payment-icon-box" style="background:#FFF8E1; color:#F57F17;">PL</div>
                             <div>
                                 <div class="payment-option-label">Pay Later</div>
@@ -711,6 +711,21 @@
             // shipping-option-default
             updateSummary();
         });
+        function selectPayment(el, method) {
+        // hapus semua selected
+        document.querySelectorAll('.payment-option').forEach(item => {
+            item.classList.remove('selected');
+        });
+
+        // tambah selected ke yang diklik
+        el.classList.add('selected');
+
+        // ✅ SET RADIO CHECKED (INI YANG PENTING)
+        const radio = el.querySelector('input[type="radio"]');
+        if (radio) {
+            radio.checked = true;
+        }
+    }
     </script>
     <script src="{{ asset('storage/js/functionBackend.js') }}"></script>
     {{-- <script src="{{ asset('storage/js/payment.js') }}"></script> --}}
