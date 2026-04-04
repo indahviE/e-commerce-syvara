@@ -46,25 +46,33 @@
             @if ($categories->count() > 0)
                 <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                     @foreach ($categories as $category)
-                        <a href="/category/{{ $category->id }}" class="group block overflow-hidden rounded-[32px] border border-pink-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl">
-                            <div class="p-6 sm:p-8">
-                                <div class="flex items-center justify-between gap-4 mb-6">
-                                    <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-100 text-pink-600 shadow-sm">
-                                        <i class="fas fa-tags text-lg"></i>
-                                    </span>
-                                    <span class="text-xs font-bold uppercase tracking-[0.35em] text-pink-500">Kategori</span>
-                                </div>
+                        {{-- Hitung produk dari kedua relasi --}}
+                        @php
+                            $productCount = $category->products()->count() + $category->productCategories()->count();
+                        @endphp
 
-                                <h2 class="text-2xl font-bold text-gray-900 mb-3">{{ $category->category_name }}</h2>
-                                <p class="text-sm text-gray-500 mb-6">Terdapat <span class="font-semibold text-pink-600">{{ $category->products->count() }}</span> produk dalam kategori ini.</p>
+                        {{-- Hanya tampilkan kategori yang punya produk --}}
+                        @if($productCount > 0)
+                            <a href="/category/{{ $category->id }}" class="group block overflow-hidden rounded-[32px] border border-pink-100 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl">
+                                <div class="p-6 sm:p-8">
+                                    <div class="flex items-center justify-between gap-4 mb-6">
+                                        <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-100 text-pink-600 shadow-sm">
+                                            <i class="fas fa-tags text-lg"></i>
+                                        </span>
+                                        <span class="text-xs font-bold uppercase tracking-[0.35em] text-pink-500">Kategori</span>
+                                    </div>
 
-                                <div class="inline-flex items-center gap-2 text-sm font-semibold text-pink-600 transition group-hover:gap-3">
-                                    <span>Lihat produk</span>
-                                    <i class="fas fa-arrow-right"></i>
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-3">{{ $category->category_name }}</h2>
+                                    <p class="text-sm text-gray-500 mb-6">Terdapat <span class="font-semibold text-pink-600">{{ $productCount }}</span> produk dalam kategori ini.</p>
+
+                                    <div class="inline-flex items-center gap-2 text-sm font-semibold text-pink-600 transition group-hover:gap-3">
+                                        <span>Lihat produk</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="h-8 bg-gradient-to-r from-pink-50 to-rose-50"></div>
-                        </a>
+                                <div class="h-8 bg-gradient-to-r from-pink-50 to-rose-50"></div>
+                            </a>
+                        @endif
                     @endforeach
                 </div>
             @else

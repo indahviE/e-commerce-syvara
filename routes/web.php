@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Models\User;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\WishlistController;
@@ -111,6 +112,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/vouchers/{voucher}/edit', [VoucherController::class, 'edit'])->name('admin.vouchers.edit');
     Route::patch('/admin/vouchers/{voucher}', [VoucherController::class, 'update'])->name('admin.vouchers.update');
     Route::delete('/admin/vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('admin.vouchers.destroy');
+
+    // discount CRUD
+    Route::get('/admin/discounts', [DiscountController::class, 'index'])->name('admin.discounts.index');
+    Route::get('/admin/discounts/create', [DiscountController::class, 'create'])->name('admin.discounts.create');
+    Route::post('/admin/discounts', [DiscountController::class, 'store'])->name('admin.discounts.store');
+    Route::get('/admin/discounts/{discount}/edit', [DiscountController::class, 'edit'])->name('admin.discounts.edit');
+    Route::patch('/admin/discounts/{discount}', [DiscountController::class, 'update'])->name('admin.discounts.update');
+    Route::delete('/admin/discounts/{discount}', [DiscountController::class, 'destroy'])->name('admin.discounts.destroy');
+
+
 });
 
 Route::middleware(['auth', 'member'])->group(function () {

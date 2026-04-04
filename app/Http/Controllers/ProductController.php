@@ -27,8 +27,10 @@ class ProductController extends Controller
                 $q2->where('category_name', $categoryName)
             ))
             ->get();
-
-        $categories = Category::has('products')->get();
+            $categories = Category::whereHas('productCategories')
+                ->orWhereHas('products')
+                ->with(['productCategories', 'products'])
+                ->get();
 
         // dd($products);
         return view('product', [
@@ -39,7 +41,9 @@ class ProductController extends Controller
     }
     public function viewAdminProduct()
     {
-        $products = Products::with('categories')->get();
+        $products = Products::with('categories')
+            ->paginate(5)
+            ->withQueryString();
         return view('productAdmin', ['products' => $products]);
     }
     public function product_detail($id)

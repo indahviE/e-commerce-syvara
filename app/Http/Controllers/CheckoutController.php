@@ -53,7 +53,7 @@ class CheckoutController extends Controller
             $query->whereDate('created_at', '<=', $request->sampai);
         }
 
-        $orders    = $query->paginate(15);
+        $orders    = $query->paginate(5);
         $allOrders = Orders::all(); // untuk stat card
 
 
@@ -95,7 +95,7 @@ class CheckoutController extends Controller
         $request["user_id"] = Auth::user()->id;
         $request["tanggal_waktu"] = Carbon::now();
 
-        // Diproses, Dikemas, Dikirim, Diterima 
+        // Diproses, Dikemas, Dikirim, Diterima
         $request["status_order"] = "Diproses";
 
         // hitung total harga
@@ -118,7 +118,7 @@ class CheckoutController extends Controller
         }
 
         $request["payment_method"] = $request['payment'];
-
+        // dd($request->all());
         $order = Orders::create($request->all());
 
         // order DETAIL :)

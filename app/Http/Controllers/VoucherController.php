@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vouchers;
+use App\Models\Discount;
 use Illuminate\Http\Request;
 
 class VoucherController extends Controller
@@ -10,7 +11,8 @@ class VoucherController extends Controller
     public function index()
     {
         $vouchers = Vouchers::latest()->paginate(20);
-        return view('admin.vouchers.index', compact('vouchers'));
+        $discounts = Discount::with('product')->latest()->paginate(20);
+        return view('admin.vouchers.index', compact('vouchers', 'discounts'));
     }
 
     public function create()
