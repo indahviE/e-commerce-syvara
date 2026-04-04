@@ -20,10 +20,12 @@ class CheckoutController extends Controller
             return redirect('/login');
         }
 
-        $product = Products::where("id", $request->produk_id)->get();
-        $product[0]["qty"] = $request->qty;
-        // dd($product);
-        return view('payment_view', ["products" => $product]);
+        $product = Products::with('discount')->where('id', $request->produk_id)->get();
+        if ($product->isNotEmpty()) {
+            $product[0]['qty'] = $request->qty;
+        }
+
+        return view('payment_view', ['products' => $product]);
     }
 
     public function order_view(Request $request)
@@ -65,10 +67,8 @@ class CheckoutController extends Controller
         $products = [];
 
         foreach ($request->id as $produkid) {
-            $products[] = Products::where('id', $produkid)->first();
+            $products[] = Products::with('discount')->where('id', $produkid)->first();
         }
-        // $products = Products::whereIn('id', $request->id)->get();
-        // dd($request->all(), $products);
 
         $i = 0;
         foreach ($products as $data) {
@@ -76,8 +76,7 @@ class CheckoutController extends Controller
             $i++;
         }
 
-        // dd($products, $request->qtys);
-        return view('payment_cart_view', ["products" => $products]);
+        return view('payment_cart_view', ['products' => $products]);
     }
 
     public function CheckPromo(Request $request)
@@ -102,19 +101,19 @@ class CheckoutController extends Controller
         $request["total_price"] = 0;
 
         for ($i = 0; $i < count($request->id); $i++) {
-            # code...
-            $product = Products::findOrFail($request->id[$i]);
-            $request["total_price"] += $product->price * $request->qtys[$i];
+            $product = Products::with('discount')->findOrFail($request->id[$i]);
+            $price = $product->discounted_price;
+            $request['total_price'] += $price * $request->qtys[$i];
         }
 
         if ($request->voucher) {
             $voucher = Vouchers::where('kode', $request->voucher)->first();
             if ($voucher) {
-                $request["voucher_id"] = $voucher->id;
-                $request["total_price"] = $request["total_price"] - ($request["total_price"] * ($voucher->discount / 100));
+                $request['voucher_id'] = $voucher->id;
+                $request['total_price'] = $request['total_price'] - ($request['total_price'] * ($voucher->discount / 100));
             }
         } else {
-            $request["voucher_id"] = null;
+            $request['voucher_id'] = null;
         }
 
         $request["payment_method"] = $request['payment_method2'];
@@ -125,14 +124,14 @@ class CheckoutController extends Controller
         $cart = Cart::where('user_id', Auth::id())->first();
 
         for ($i = 0; $i < count($request->id); $i++) {
-            # code...
-            $product = Products::findOrFail($request->id[$i]);
+            $product = Products::with('discount')->findOrFail($request->id[$i]);
+            $price = $product->discounted_price;
             $order_detail = OrderDetail::create([
-                "order_id" => $order->id,
-                "product_id" => $product->id,
-                "subtotal_price" => $product->price * $request->qtys[$i],
-                "harga_saat_ini" => $product->price,
-                "qty" => $request->qtys[$i]
+                'order_id' => $order->id,
+                'product_id' => $product->id,
+                'subtotal_price' => $price * $request->qtys[$i],
+                'harga_saat_ini' => $price,
+                'qty' => $request->qtys[$i]
             ]);
 
             // $product["stock"] -= $request->qtys[$i];

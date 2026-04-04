@@ -72,7 +72,7 @@ class CategoryController extends Controller
         $productIds = array_unique(array_merge($productFromOneToMany, $productFromManyToMany));
 
         // Ambil semua produk berdasarkan ID yang sudah dikumpulkan
-        $product = Products::whereIn('id', $productIds)->get();
+        $product = Products::with('discount')->whereIn('id', $productIds)->get();
 
         return view('category-products', [
             'category' => $category,

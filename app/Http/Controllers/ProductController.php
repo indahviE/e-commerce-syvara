@@ -16,7 +16,7 @@ class ProductController extends Controller
         $categoryName = $request->category_name;
         $categoryId   = $request->id;
 
-        $products = Products::with('categories')
+        $products = Products::with(['categories', 'discount'])
             ->when($s, fn($q) => $q->where('name', 'like', "%$s%"))
             ->when($categoryId, fn($q) => $q->whereHas('categories', fn($q2) =>
                 $q2->where('categories.id', $categoryId)
@@ -41,14 +41,14 @@ class ProductController extends Controller
     }
     public function viewAdminProduct()
     {
-        $products = Products::with('categories')
+        $products = Products::with(['categories', 'discount'])
             ->paginate(5)
             ->withQueryString();
         return view('productAdmin', ['products' => $products]);
     }
     public function product_detail($id)
     {
-        $product = Products::with(['categories', 'faqs', 'guides'])->findOrFail($id);
+        $product = Products::with(['categories', 'faqs', 'guides', 'discount'])->findOrFail($id);
         $categories = $product->categories;
 
         $categoryIds = $product->categories->pluck('id')->toArray();

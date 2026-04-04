@@ -55,10 +55,28 @@ class Products extends Model
         return $this->hasMany(faq_product::class, 'produk_id');
     }
 
-    // public function discount()
-    // {
-    //     return $this->hasOne(Discount::class);
-    // }
+    public function discount()
+    {
+        return $this->hasOne(Discount::class);
+    }
+
+    public function getDiscountedPriceAttribute()
+    {
+        if ($this->discount && $this->discount->is_active) {
+            if ($this->discount->discount_type === 'percentage') {
+                return max(0, round($this->price * (100 - $this->discount->discount_value) / 100));
+            }
+
+            return max(0, $this->price - $this->discount->discount_value);
+        }
+
+        return $this->price;
+    }
+
+    public function getHasDiscountAttribute()
+    {
+        return $this->discount && $this->discount->is_active;
+    }
 
     public function guides()
     {

@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('products_id')->constrained('products')->onDelete('cascade');
             $table->enum('discount_type', ['percentage', 'nominal']);
             $table->integer('discount_value');
             $table->date('valid_until');
             $table->timestamps();
 
             // Unique constraint: satu produk hanya bisa punya satu diskon
-            $table->unique('product_id');
+            $table->unique('products_id');
 
             // Indexes untuk query lebih cepat
             $table->index('valid_until');
