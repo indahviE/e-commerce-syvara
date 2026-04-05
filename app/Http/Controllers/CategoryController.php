@@ -14,7 +14,7 @@ class CategoryController extends Controller
         return view('category', ['categories' => $category]);
     }
     public function viewAdminCategory() {
-        $category = Category::all();
+        $category = Category::paginate(5);
         return view('categoryAdmin', ['category' => $category]);
     }
     public function view_create(){

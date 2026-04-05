@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\OrderDetail;
 use App\Models\Products;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -33,22 +34,36 @@ class ProductController extends Controller
 
         $categories = Category::has('products')->get();
 
-                $products = Products::with('categories')->get();
+        $products = Products::with('categories')->get();
 
-                if (Auth::check()) {
-                    $wishlistIds = \App\Models\Wishlist::where('user_id', Auth::id())
-                        ->pluck('product_id')
-                        ->toArray();
+        if (Auth::check()) {
+            $wishlistIds = \App\Models\Wishlist::where('user_id', Auth::id())
+                ->pluck('product_id')
+                ->toArray();
 
-                    foreach ($products as $product) {
-                        $product->is_wishlisted = in_array($product->id, $wishlistIds);
-                    }
-                }
-        // dd($products);
+            foreach ($products as $product) {
+                $product->is_wishlisted = in_array($product->id, $wishlistIds);
+            }
+        }
+
+        $topProductIds = OrderDetail::whereHas('order', fn($q) => $q->where('status_order', '!=', 'Dibatalkan'))
+            ->selectRaw('product_id, SUM(qty) as total_qty')
+            ->groupBy('product_id')
+            ->orderByDesc('total_qty')
+            ->limit(15)
+            ->pluck('product_id');
+
+        $frequentProducts = Products::with('categories')
+            ->whereIn('id', $topProductIds)
+            ->get()
+            ->sortBy(fn($product) => $topProductIds->search($product->id))
+            ->values();
+
         return view('product', [
             'categories' => $categories,
             'products'   => $products,
             'search'     => $s,
+            'frequentProducts' => $frequentProducts,
         ]);
     }
     public function viewAdminProduct()
