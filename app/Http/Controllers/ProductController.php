@@ -16,9 +16,11 @@ class ProductController extends Controller
         $categoryName = $request->category_name;
         $categoryId   = $request->id;
 
-        $products = Products::with(['categories', 'discount'])
+        $products = Products::with('categories')
             ->when($s, fn($q) => $q->where('name', 'like', "%$s%"))
-            ->when($categoryId, fn($q) => $q->whereHas('categories', fn($q2) =>
+            ->when($categoryId, fn($q) => $q->whereHas(
+                'categories',
+                fn($q2) =>
                 $q2->where('categories.id', $categoryId)
             ))
             ->when($categoryName, fn($q) => $q->whereHas(
@@ -27,10 +29,8 @@ class ProductController extends Controller
                 $q2->where('category_name', $categoryName)
             ))
             ->get();
-            $categories = Category::whereHas('productCategories')
-                ->orWhereHas('products')
-                ->with(['productCategories', 'products'])
-                ->get();
+
+        $categories = Category::has('products')->get();
 
         // dd($products);
         return view('product', [
@@ -41,20 +41,18 @@ class ProductController extends Controller
     }
     public function viewAdminProduct()
     {
-        $products = Products::with(['categories', 'discount'])
-            ->paginate(5)
-            ->withQueryString();
+        $products = Products::with('categories')->paginate(5);
         return view('productAdmin', ['products' => $products]);
     }
     public function product_detail($id)
     {
-        $product = Products::with(['categories', 'faqs', 'guides', 'discount'])->findOrFail($id);
+        $product = Products::with(['categories', 'faqs', 'guides'])->findOrFail($id);
         $categories = $product->categories;
 
         $categoryIds = $product->categories->pluck('id')->toArray();
         $relatedProducts = Products::when(count($categoryIds), fn($q) => $q->whereHas('categories', function ($q2) use ($categoryIds) {
-                $q2->whereIn('categories.id', $categoryIds);
-            }))
+            $q2->whereIn('categories.id', $categoryIds);
+        }))
             ->where('id', '!=', $id)
             ->limit(5)
             ->get();
@@ -91,7 +89,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'category_ids' => 'required|array|min:1',
             'category_ids.*' => 'exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048'
+            'gambar' => 'nullable|image|mimes:jpeg,jpg,png|max:2048'
         ], [
             'price.numeric' => 'Harga harus berupa angka!',
             'price.min' => 'Harga tidak boleh negatif!',
@@ -100,9 +98,10 @@ class ProductController extends Controller
             'category_ids.required' => 'Pilih minimal satu kategori!',
             'category_ids.array' => 'Format kategori tidak valid!',
             'category_ids.*.exists' => 'Kategori tidak ditemukan!',
-            'image.mimes' => 'Format foto tidak mendukung!',
-            'image.max' => 'Ukuran gambar maksimal 2mb!'
+            'gambar.mimes' => 'Format foto tidak mendukung!',
+            'gambar.max' => 'Ukuran gambar maksimal 2mb!'
         ]);
+
 
         $exists = Products::where('name', $request->name)
             ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $request->category_ids))
@@ -112,11 +111,21 @@ class ProductController extends Controller
             return back()->withErrors(['name' => 'Produk dengan nama kategori ini sudah ada!']);
         }
 
-        if ($request->hasFile('image')) {
-            $image = $request->image->store('images', 'public');
+        if ($request->hasFile('gambar')) {
+            $image = $request->gambar->store('images', 'public');
         } else {
             $image = null;
         }
+
+        // dd($request->all(), $image);
+        // if ($request->hasFile('gambar')) {
+        //     if ($product->image) {
+        //         Storage::disk('public')->delete($product->image);
+        //     }
+        //     $image = $request->gambar->store('images', 'public');
+        // } else {
+        //     $image = $product->image;
+        // }
 
         $product = Products::create([
             'name' => $request->name,

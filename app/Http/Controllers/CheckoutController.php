@@ -20,12 +20,10 @@ class CheckoutController extends Controller
             return redirect('/login');
         }
 
-        $product = Products::with('discount')->where('id', $request->produk_id)->get();
-        if ($product->isNotEmpty()) {
-            $product[0]['qty'] = $request->qty;
-        }
-
-        return view('payment_view', ['products' => $product]);
+        $product = Products::where("id", $request->produk_id)->get();
+        $product[0]["qty"] = $request->qty;
+        // dd($product);
+        return view('payment_view', ["products" => $product]);
     }
 
     public function order_view(Request $request)
@@ -55,7 +53,7 @@ class CheckoutController extends Controller
             $query->whereDate('created_at', '<=', $request->sampai);
         }
 
-        $orders    = $query->paginate(5);
+        $orders    = $query->paginate(15);
         $allOrders = Orders::all(); // untuk stat card
 
 
@@ -67,8 +65,10 @@ class CheckoutController extends Controller
         $products = [];
 
         foreach ($request->id as $produkid) {
-            $products[] = Products::with('discount')->where('id', $produkid)->first();
+            $products[] = Products::where('id', $produkid)->first();
         }
+        // $products = Products::whereIn('id', $request->id)->get();
+        // dd($request->all(), $products);
 
         $i = 0;
         foreach ($products as $data) {
@@ -76,7 +76,8 @@ class CheckoutController extends Controller
             $i++;
         }
 
-        return view('payment_cart_view', ['products' => $products]);
+        // dd($products, $request->qtys);
+        return view('payment_cart_view', ["products" => $products]);
     }
 
     public function CheckPromo(Request $request)
@@ -94,44 +95,44 @@ class CheckoutController extends Controller
         $request["user_id"] = Auth::user()->id;
         $request["tanggal_waktu"] = Carbon::now();
 
-        // Diproses, Dikemas, Dikirim, Diterima
+        // Diproses, Dikemas, Dikirim, Diterima 
         $request["status_order"] = "Diproses";
 
         // hitung total harga
         $request["total_price"] = 0;
 
         for ($i = 0; $i < count($request->id); $i++) {
-            $product = Products::with('discount')->findOrFail($request->id[$i]);
-            $price = $product->discounted_price;
-            $request['total_price'] += $price * $request->qtys[$i];
+            # code...
+            $product = Products::findOrFail($request->id[$i]);
+            $request["total_price"] += $product->price * $request->qtys[$i];
         }
 
         if ($request->voucher) {
             $voucher = Vouchers::where('kode', $request->voucher)->first();
             if ($voucher) {
-                $request['voucher_id'] = $voucher->id;
-                $request['total_price'] = $request['total_price'] - ($request['total_price'] * ($voucher->discount / 100));
+                $request["voucher_id"] = $voucher->id;
+                $request["total_price"] = $request["total_price"] - ($request["total_price"] * ($voucher->discount / 100));
             }
         } else {
-            $request['voucher_id'] = null;
+            $request["voucher_id"] = null;
         }
 
-        $request["payment_method"] = $request['payment_method2'];
-        // dd($request->all());
-        $order = Orders::create($request->all());
+        $request["payment_method"] = $requestpayment_method2;
+
+      $order = Orders::create($request->all());
 
         // order DETAIL :)
         $cart = Cart::where('user_id', Auth::id())->first();
 
         for ($i = 0; $i < count($request->id); $i++) {
-            $product = Products::with('discount')->findOrFail($request->id[$i]);
-            $price = $product->discounted_price;
+            # code...
+            $product = Products::findOrFail($request->id[$i]);
             $order_detail = OrderDetail::create([
-                'order_id' => $order->id,
-                'product_id' => $product->id,
-                'subtotal_price' => $price * $request->qtys[$i],
-                'harga_saat_ini' => $price,
-                'qty' => $request->qtys[$i]
+                "order_id" => $order->id,
+                "product_id" => $product->id,
+                "subtotal_price" => $product->price * $request->qtys[$i],
+                "harga_saat_ini" => $product->price,
+                "qty" => $request->qtys[$i]
             ]);
 
             // $product["stock"] -= $request->qtys[$i];

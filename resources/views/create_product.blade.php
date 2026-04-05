@@ -149,7 +149,7 @@
                             <label class="block text-sm font-bold text-gray-700 mb-2">
                                 <i class="fas fa-image mr-2 text-pink-600"></i> Gambar Produk
                             </label>
-                            <input type="file" name="image" accept="image/*"
+                            <input type="file" name="gambar" accept="image/*"
                                 class="w-full border-2 border-gray-200 rounded-lg px-4 py-3">
                         </div>
 

@@ -111,10 +111,6 @@
 
                 <!-- ITEM 1 -->
                 @foreach ($products as $data)
-                    @php
-                        $effectivePrice = $data->discounted_price;
-                        $hasDiscount = $data->has_discount;
-                    @endphp
                     <div class="cart-item" id="item-{{ $loop->iteration }}">
                         <input type="text" type="number" name="id[]" value="{{$data->id}}" hidden>
                         <a href="/product/{{ $data->id }}/detail"
@@ -143,25 +139,19 @@
                             </a>
                             <div class="item-bottom">
                                 <div>
-                                    <div class="item-price">
-                                        @if($hasDiscount)
-                                            <span class="text-sm text-gray-500 line-through">Rp {{ number_format($data->price, 0, ',', '.') }}</span>
-                                            <span class="text-pink-600 font-semibold">Rp {{ number_format($effectivePrice, 0, ',', '.') }}</span>
-                                        @else
-                                            Rp {{ number_format($effectivePrice, 0, ',', '.') }}
-                                        @endif
+                                    <div class="item-price">Rp {{ number_format($data->price, 0, ',', '.') }}
                                     </div>
                                     <div class="item-subtotal" id="subtotal-{{ $loop->iteration }}">Subtotal: Rp
-                                        {{ number_format($effectivePrice, 0, ',', '.') }}</div>
+                                        {{ number_format($data->price, 0, ',', '.') }}</div>
                                 </div>
                                 <div class="qty-control">
                                     <button type="button" class="qty-btn"
-                                        onclick="changeQty('qty-{{ $loop->iteration }}', -1, {{ $effectivePrice }}, 'subtotal-{{ $loop->iteration }}')">−</button>
+                                        onclick="changeQty('qty-{{ $loop->iteration }}', -1, {{ $data->price }}, 'subtotal-{{ $loop->iteration }}')">−</button>
                                     <input type="number" id="qty-{{ $loop->iteration }}" class="qty-input"
                                         value="1" min="1" max="11" name="qtys[]"
-                                        onchange="calcSubtotal('qty-{{ $loop->iteration }}', {{ $effectivePrice }}, 'subtotal-{{ $loop->iteration }}')">
+                                        onchange="calcSubtotal('qty-{{ $loop->iteration }}', {{ $data->price }}, 'subtotal-{{ $loop->iteration }}')">
                                     <button type="button" class="qty-btn"
-                                        onclick="changeQty('qty-{{ $loop->iteration }}', 1, {{ $effectivePrice }}, 'subtotal-{{ $loop->iteration }}')">+</button>
+                                        onclick="changeQty('qty-{{ $loop->iteration }}', 1, {{ $data->price }}, 'subtotal-{{ $loop->iteration }}')">+</button>
                                 </div>
                             </div>
                         </div>
