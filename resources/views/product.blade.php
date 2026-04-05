@@ -57,11 +57,15 @@
             }
         }
 
-        .heart-btn {
+        .wishlist-btn {
             transition: all 0.2s ease;
         }
 
-        .heart-btn:active {
+        /* .wishlist-btn {
+        position: relative;
+        z-index: 10;
+        } */
+        .wishlist-btn:active {
             transform: scale(1.15);
         }
 
@@ -100,6 +104,9 @@
 
         section {
             flex: 1;
+        }
+        #productGrid {
+        transition: all 0.4s ease;
         }
     </style>
 </head>
@@ -147,7 +154,8 @@
                         </button>
                     </form>
 
-                @foreach ($categories as $category)
+                @foreach ($categories->take(20) as $category)
+
                     <form action="" method="get">
                         <input type="text" hidden name="category_name" value="{{$category->category_name}}">
                         <input type="text" hidden name="id" value="{{$category->id}}">
@@ -166,6 +174,13 @@
                         </button>
                     </form>
                 @endforeach
+                @if ($categories->count() > 20)
+                    <a href="/category">
+                        <span class="inline-block text-sm font-bold text-gray-500 bg-white px-3 py-1 rounded-full border border-gray-200 hover:bg-gray-100">
+                            ...
+                        </span>
+                    </a>
+                @endif
 
 
             </div>
@@ -305,11 +320,11 @@
                     {{-- Tombol Kiri --}}
                     <button onclick="changePage(-1)" id="btnPrev"
                         class="absolute -left-5 top-1/2 -translate-y-1/2 z-10
-               w-10 h-10 rounded-full bg-white border border-pink-200 shadow-md
-               flex items-center justify-center text-pink-400
-               hover:bg-pink-500 hover:text-white hover:border-pink-500
-               disabled:opacity-30 disabled:cursor-not-allowed
-               transition-all duration-200">
+                        w-10 h-10 rounded-full bg-white border border-pink-200 shadow-md
+                        flex items-center justify-center text-pink-400
+                        hover:bg-pink-500 hover:text-white hover:border-pink-500
+                        disabled:opacity-30 disabled:cursor-not-allowed
+                        transition-all duration-200">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2.5">
                             <path d="M15 18l-6-6 6-6" />
@@ -319,11 +334,11 @@
                     {{-- Tombol Kanan --}}
                     <button onclick="changePage(1)" id="btnNext"
                         class="absolute -right-5 top-1/2 -translate-y-1/2 z-10
-               w-10 h-10 rounded-full bg-white border border-pink-200 shadow-md
-               flex items-center justify-center text-pink-400
-               hover:bg-pink-500 hover:text-white hover:border-pink-500
-               disabled:opacity-30 disabled:cursor-not-allowed
-               transition-all duration-200">
+                        w-10 h-10 rounded-full bg-white border border-pink-200 shadow-md
+                        flex items-center justify-center text-pink-400
+                        hover:bg-pink-500 hover:text-white hover:border-pink-500
+                        disabled:opacity-30 disabled:cursor-not-allowed
+                        transition-all duration-200">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2.5">
                             <path d="M9 18l6-6-6-6" />
@@ -419,16 +434,20 @@
         function render() {
             console.log("Hi i do render");
             const grid = document.getElementById('productGrid');
-            const slice = allProducts.slice(current * PER_PAGE, (current + 1) * PER_PAGE);
+            grid.style.opacity = 0;
+            grid.style.transform = "translateX(40px)";
 
-            // Render hanya 5 item aktif
-            grid.innerHTML = slice.map(renderCard).join('');
+            setTimeout(() => {
+                const slice = allProducts.slice(current * PER_PAGE, (current + 1) * PER_PAGE);
 
-            // Tombol
-            document.getElementById('btnPrev').disabled = current === 0;
-            document.getElementById('btnNext').disabled = current === totalPage - 1;
+                grid.innerHTML = slice.map(renderCard).join('');
 
-            // Info
+                //animasi masuk
+                grid.style.transform = "translateX(0)";
+                grid.style.opacity = 1;
+            }, 150);
+
+            // info
             const from = current * PER_PAGE + 1;
             const to = Math.min((current + 1) * PER_PAGE, total);
             document.getElementById('pageInfo').textContent = `${from}–${to} dari ${total} produk`;
@@ -454,9 +473,7 @@
 function renderCard(p) {
     const imgHtml = p.image
         ? `<img src="/storage/${p.image}" alt="${p.name}" class="w-full h-full object-cover">`
-        : `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 to-rose-100">
-               <i class="fas fa-image text-4xl text-pink-300"></i>
-           </div>`;
+        : `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 to-rose-100"><i class="fas fa-image text-4xl text-pink-300"></i></div>`;
 
     const isNew = new Date(p.created_at) > new Date(Date.now() - 3 * 60 * 60 * 1000);
     const isLow = p.stock < 5 && p.stock > 0;
@@ -492,17 +509,8 @@ function renderCard(p) {
     }
 
     const wishBtn = isAuth
-        ? `<button class="wishlist-btn heart-btn absolute top-3 right-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-pink-50 transition z-10"
-                   data-product-id="${p.id}"
-                   onclick="event.preventDefault(); event.stopPropagation();"
-                   title="Tambah ke favorit">
-               <i class="fas fa-heart ${isWish ? 'text-pink-600' : 'far text-gray-400'} text-lg"></i>
-           </button>`
-        : `<a href="/login" onclick="event.stopPropagation();"
-              class="absolute top-3 right-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-pink-50 transition z-10"
-              title="Login untuk favorit">
-               <i class="far fa-heart text-gray-400 text-lg"></i>
-           </a>`;
+        ? `<button class="wishlist-btn pointer-events-auto heart-btn absolute top-3 right-3 z-50 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-pink-50 transition z-10"data-product-id="${p.id}"title="Tambah ke favorit"><i class="fas fa-heart ${isWish ? 'text-pink-600' : 'far text-gray-400'} text-lg"></i></button>`
+        : `<a href="/login" onclick="event.stopPropagation();"class="absolute top-3 right-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-pink-50 transition z-10"title="Login untuk favorit"><i class="far fa-heart text-gray-400 text-lg"></i></a>`;
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
     const checkoutRoute = "{{ route('show_single_payment') }}";
@@ -582,60 +590,53 @@ function renderCard(p) {
 
 
                             function changePage(dir) {
-                                const next = current + dir;
-                                console.log(next, totalPage)
-                                if (next < 0 || next >= totalPage) return;
-                                current = next;
-                                console.log("ok", {
-                                    current,
-                                    next,
-                                    istrue: next < 0 || next >= totalPage
-                                })
-                                render();
-                            }
+                            const next = current + dir;
+                            if (next < 0 || next >= totalPage) return;
+
+                            const grid = document.getElementById('productGrid');
+
+                            // 🔥 arah animasi (biar realistis)
+                            grid.style.transform = dir > 0 ? "translateX(60px)" : "translateX(-60px)";
+
+                            current = next;
+                            render();
+                        }
 
                             render(); // init
 
 
-                            document.addEventListener('DOMContentLoaded', function() {
-                                document.querySelectorAll('.wishlist-btn').forEach(btn => {
-                                    btn.addEventListener('click', async (e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
+                            document.addEventListener('click', async function (e) {
+                            const btn = e.target.closest('.wishlist-btn');
+                            if (!btn) return;
 
-                                        const productId = btn.dataset.productId;
+                            e.preventDefault();
+                            e.stopPropagation();
 
-                                        try {
-                                            const response = await fetch(` / wishlist / toggle / $ {
-            productId
-        }
-        `, {
-                                                method: 'POST',
-                                                headers: {
-                                                    'X-CSRF-TOKEN': document.querySelector(
-                                                        'meta[name="csrf-token"]').content,
-                                                    'Content-Type': 'application/json'
-                                                }
-                                            });
+                            const productId = btn.dataset.productId;
 
-                                            const data = await response.json();
-
-                                            if (data.status === 'added') {
-                                                btn.innerHTML =
-                                                    '<i class="fas fa-heart text-pink-600 text-lg"></i>';
-                                                showNotification('Ditambahkan ke favorit', 'success');
-                                            } else {
-                                                btn.innerHTML =
-                                                    '<i class="far fa-heart text-gray-400 text-lg"></i>';
-                                                showNotification('Dihapus dari favorit', 'info');
-                                            }
-                                        } catch (error) {
-                                            console.error('Error:', error);
-                                            showNotification('Gagal update favorit', 'error');
-                                        }
-                                    });
+                            try {
+                                const response = await fetch(`/wishlist/toggle/${productId}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                        'Content-Type': 'application/json'
+                                    }
                                 });
-                            });
+
+                                const data = await response.json();
+
+                                if (data.status === 'added') {
+                                    btn.innerHTML = '<i class="fas fa-heart text-pink-600 text-lg"></i>';
+                                    showNotification('Ditambahkan ke favorit', 'success');
+                                } else {
+                                    btn.innerHTML = '<i class="far fa-heart text-gray-400 text-lg"></i>';
+                                    showNotification('Dihapus dari favorit', 'info');
+                                }
+                            } catch (error) {
+                                console.error(error);
+                                showNotification('Gagal update favorit', 'error');
+                            }
+                        });
 
                             // Notification function
                             function showNotification(message, type = 'info') {
@@ -645,22 +646,21 @@ function renderCard(p) {
 
                                 const bgColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6';
 
-                                notification.style.cssText = `
-        position: fixed;
-        bottom: 30 px;
-        right: 20 px;
-        background: $ {
-            bgColor
-        };
-        color: white;
-        padding: 14 px 20 px;
-        border - radius: 10 px;
-        z - index: 9999;
-        font - weight: 600;
-        font - size: 14 px;
-        box - shadow: 0 10 px 25 px rgba(0, 0, 0, 0.2);
-        animation: slideInUp 0.3 s ease - out;
-        `;
+                                notification.style.cssText = `postion: fixed;
+                                    bottom: 30 px;
+                                    right: 20 px;
+                                    background: $ {
+                                        bgColor
+                                    };
+                                    color: white;
+                                    padding: 14 px 20 px;
+                                    border - radius: 10 px;
+                                    z - index: 9999;
+                                    font - weight: 600;
+                                    font - size: 14 px;
+                                    box - shadow: 0 10 px 25 px rgba(0, 0, 0, 0.2);
+                                    animation: slideInUp 0.3 s ease - out;
+                                    `;
 
                                 document.body.appendChild(notification);
 
@@ -673,28 +673,28 @@ function renderCard(p) {
                             // Add animation styles
                             const style = document.createElement('style');
                             style.textContent = `
-        @keyframes slideInUp {
-            from {
-                transform: translateY(20 px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
+                                @keyframes slideInUp {
+                                    from {
+                                        transform: translateY(20 px);
+                                        opacity: 0;
+                                    }
+                                    to {
+                                        transform: translateY(0);
+                                        opacity: 1;
+                                    }
+                                }
 
-        @keyframes slideOutDown {
-            from {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateY(20 px);
-                opacity: 0;
-            }
-        }
-        `;
+                                @keyframes slideOutDown {
+                                    from {
+                                        transform: translateY(0);
+                                        opacity: 1;
+                                    }
+                                    to {
+                                        transform: translateY(20 px);
+                                        opacity: 0;
+                                    }
+                                }
+                                `;
                             document.head.appendChild(style);
     </script>
     <script src="{{ asset('storage/js/functionBackend.js') }}"></script>

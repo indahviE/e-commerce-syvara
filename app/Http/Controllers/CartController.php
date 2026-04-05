@@ -27,7 +27,7 @@ class CartController extends Controller
         }
 
         $cartDetails = CartDetail::where('cart_id', $cart->id)
-            ->with('product.categories', 'product.discount') // eager load relasi product dan diskon
+            ->with('product.categories') 
             ->get();
 
         // ambil product nya aja (fungsi map.js di laravl)
