@@ -140,7 +140,7 @@
                             @foreach ($products as $data)
                                 <!-- Product Card -->
                                 <div
-                                    class="product-card group bg-white rounded-2xl overflow-hidden border border-pink-100 hover:border-pink-300 block">
+                                class="product-card group bg-white rounded-2xl overflow-hidden border border-pink-100 hover:border-pink-300 flex flex-col h-full">
                                     <!-- Product Image Container -->
                                     <a href="/product/{{ $data->id }}/detail">
                                         <div class="product-img relative h-48 sm:h-56 overflow-hidden">
@@ -201,17 +201,25 @@
                                         </div>
 
                                         <!-- Product Info -->
-                                        <div class="p-4">
+                                        <div class="p-4 flex flex-col flex-grow">
                                             <!-- Category Badge -->
-                                            <div class="mb-2">
-                                                @foreach ($data->categories as $category)
+                                            <div class="mb-2 flex flex-wrap gap-1 min-h-[28px]">
+                                                @php
+                                                    $maxShow = 2;
+                                                    $categories = $data->categories;
+                                                @endphp
+
+                                                @foreach ($categories->take($maxShow) as $category)
                                                     <span
-                                                        class="inline-block mb-1 text-xs font-bold text-pink-600 bg-pink-50 px-2.5 py-1 rounded-full border border-pink-200">
+                                                        class="text-xs font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
                                                         {{ $category->category_name }}
                                                     </span>
                                                 @endforeach
-                                               
-                                            </div>
+
+                                                @if ($categories->count() > $maxShow)
+                                                    <span class="text-xs text-gray-400 font-semibold">...</span>
+                                                @endif
+</div>
 
                                             <!-- Product Name -->
                                             <h3
@@ -274,30 +282,6 @@
     <!-- Main Content -->
     <section class=" px-4">
         <div class="max-w-7xl mx-auto">
-            <!-- Stats -->
-            <div class="flex flex-wrap gap-4">
-                <div class="bg-white/80 backdrop-blur-sm rounded-xl px-6 py-3 border border-pink-200">
-                    <p class="text-sm text-gray-600">Total Favorit</p>
-                    <p class="text-2xl font-bold text-pink-600">
-                        @if ($products && $products->count() > 0)
-                            {{ $products->count() }}
-                        @else
-                            0
-                        @endif
-                    </p>
-                </div>
-                <div class="bg-white/80 backdrop-blur-sm rounded-xl px-6 py-3 border border-pink-200">
-                    <p class="text-sm text-gray-600">Total Harga</p>
-                    <p class="text-2xl font-bold text-pink-600">
-                        @if ($products && $products->count() > 0)
-                            Rp {{ number_format($products->sum('price'), 0, ',', '.') }}
-                        @else
-                            Rp 0
-                        @endif
-                    </p>
-                </div>
-            </div>
-        </div>
         <!-- Back to Shopping -->
         <div class="mt-16 text-center mb-16">
             <p class="text-gray-600 mb-6">Ingin menambah lebih banyak favorit?</p>
